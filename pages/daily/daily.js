@@ -358,9 +358,27 @@ Page({
     } catch {}
   },
 
+  onHide() {
+    // 保存已获取的 LLM 解读文本，切回来不需要重新请求
+    if (this.data.reading) {
+      getApp().globalData.dailyPageState = {
+        reading: this.data.reading,
+        showReading: this.data.showReading,
+        dateStr: this.data.dateStr,
+      };
+    }
+  },
+
   onShow() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 0 });
+    }
+    // 如果今天的解读已缓存，切回来直接还原，不重新请求
+    var saved = getApp().globalData.dailyPageState;
+    if (saved && saved.reading && saved.dateStr === this.data.dateStr) {
+      if (!this.data.reading) {
+        this.setData({ reading: saved.reading, showReading: saved.showReading });
+      }
     }
   },
 

@@ -52,12 +52,45 @@ Page({
 
   onLoad() {
     wx.showShareMenu({ withShareTicket: true, menus: ['shareAppMessage', 'shareTimeline'] });
+    // 页面被内存回收后重新 onLoad，从 globalData 还原上一次的状态
+    var saved = getApp().globalData.drawPageState;
+    if (saved && saved.view && saved.view !== 'menu') {
+      this.setData(saved);
+    }
   },
 
   onShow() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 1 });
     }
+    // 如果页面没有被销毁（正常切 tab），也要兜一下，以防 onLoad 没执行
+    var saved = getApp().globalData.drawPageState;
+    if (saved && saved.view && saved.view !== 'menu' && this.data.view === 'menu') {
+      this.setData(saved);
+    }
+  },
+
+  onHide() {
+    // 离开页面时把完整状态快照存到 globalData
+    getApp().globalData.drawPageState = {
+      view: this.data.view,
+      phase: this.data.phase,
+      selectedSpread: this.data.selectedSpread,
+      selectedTopic: this.data.selectedTopic,
+      spreadResult: this.data.spreadResult,
+      pickIndex: this.data.pickIndex,
+      tableCards: this.data.tableCards,
+      shuffleCount: this.data.shuffleCount,
+      hexagram: this.data.hexagram,
+      wuxingAnalysis: this.data.wuxingAnalysis,
+      topicGanZhi: this.data.topicGanZhi,
+      topicFortune: this.data.topicFortune,
+      briefReading: this.data.briefReading,
+      reading: this.data.reading,
+      showReading: this.data.showReading,
+      topicQuestion: this.data.topicQuestion,
+      isLoading: false, // 加载中状态不保留，切回来如需重试手动操作
+    };
   },
 
   selectSpread(e) {

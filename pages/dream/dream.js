@@ -26,11 +26,32 @@ Page({
   onLoad() {
     wx.showShareMenu({ withShareTicket: true, menus: ['shareAppMessage', 'shareTimeline'] });
     this.setData({ hint: DREAM_HINTS[Math.floor(Math.random() * DREAM_HINTS.length)] });
+    // 页面被内存回收后重建，尝试还原上次状态
+    var saved = getApp().globalData.dreamPageState;
+    if (saved && saved.phase && saved.phase !== 'input') {
+      this.setData(saved);
+    }
+  },
+
+  onHide() {
+    if (this.data.phase !== 'input' || this.data.reading) {
+      getApp().globalData.dreamPageState = {
+        phase: this.data.phase,
+        dream: this.data.dream,
+        result: this.data.result,
+        reading: this.data.reading,
+        isLoading: false,
+      };
+    }
   },
 
   onShow() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 3 });
+    }
+    var saved = getApp().globalData.dreamPageState;
+    if (saved && saved.phase && saved.phase !== 'input' && this.data.phase === 'input') {
+      this.setData(saved);
     }
   },
 

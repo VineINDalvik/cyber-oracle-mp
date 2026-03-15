@@ -20,6 +20,11 @@ Page({
 
   onLoad(options) {
     wx.showShareMenu({ withShareTicket: true, menus: ['shareAppMessage', 'shareTimeline'] });
+    // 页面被内存回收后重建，尝试还原上次状态
+    var saved = getApp().globalData.compatPageState;
+    if (saved && saved.phase && saved.phase !== 'topic') {
+      this.setData(saved);
+    }
     const code = (options && options.code) ? String(options.code).toUpperCase() : '';
     if (!code) return;
     this.setData({ shareCode: code, phase: 'b-draw' });
@@ -38,9 +43,29 @@ Page({
     });
   },
 
+  onHide() {
+    if (this.data.phase !== 'topic') {
+      getApp().globalData.compatPageState = {
+        phase: this.data.phase,
+        topic: this.data.topic,
+        aResult: this.data.aResult,
+        aRevealed: this.data.aRevealed,
+        bResult: this.data.bResult,
+        bRevealed: this.data.bRevealed,
+        shareCode: this.data.shareCode,
+        reading: this.data.reading,
+        isLoading: false,
+      };
+    }
+  },
+
   onShow() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 2 });
+    }
+    var saved = getApp().globalData.compatPageState;
+    if (saved && saved.phase && saved.phase !== 'topic' && this.data.phase === 'topic') {
+      this.setData(saved);
     }
   },
 
