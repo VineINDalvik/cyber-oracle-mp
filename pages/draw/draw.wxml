@@ -1,0 +1,217 @@
+<view class="page">
+  <!-- Menu -->
+  <block wx:if="{{view === 'menu' && phase === 'select'}}">
+    <text class="section-label">TAROT SPREAD</text>
+    <text class="page-title neon-text">选择牌阵</text>
+
+    <view class="spread-list">
+      <view class="spread-item glass" wx:for="{{spreads}}" wx:key="id" data-idx="{{index}}" bindtap="selectSpread">
+        <view class="spread-header">
+          <text class="spread-name">{{item.name}}</text>
+          <text class="spread-count mono">{{item.cardCount}}张</text>
+        </view>
+        <text class="spread-desc">{{item.description}}</text>
+      </view>
+    </view>
+
+    <view class="topic-section">
+      <view class="topic-header">
+        <text class="section-label">FORTUNE READING</text>
+        <text class="topic-tag mono">主题解读</text>
+      </view>
+      <view class="topic-grid">
+        <view class="topic-item topic-{{item.id}}" wx:for="{{topics}}" wx:key="id" data-idx="{{index}}" bindtap="selectTopic">
+          <view class="topic-bar"></view>
+          <view class="topic-left">
+            <text class="topic-icon">{{item.icon}}</text>
+          </view>
+          <view class="topic-right">
+            <text class="topic-name">{{item.name}}</text>
+            <text class="topic-desc">{{item.desc}}</text>
+          </view>
+          <text class="topic-arrow mono">›</text>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- Topic Question -->
+  <view class="question-view" wx:if="{{view === 'topicQuestion' && phase === 'select'}}">
+    <text class="question-icon">🧩</text>
+    <text class="page-title neon-text">自由提问</text>
+    <text class="question-hint mono">一句话问清楚，解读会更准。</text>
+    <textarea class="question-input glass" value="{{topicQuestion}}" bindinput="onQuestionInput"
+      placeholder="例如：我该不该离职？这段关系还有必要继续吗？" maxlength="120" auto-height />
+    <text class="question-count mono">{{topicQuestion.length}}/120</text>
+    <view class="question-btn {{topicQuestion.length < 3 ? 'disabled' : ''}}" bindtap="submitQuestion">
+      🔀 开始洗牌
+    </view>
+    <text class="back-btn mono" bindtap="backFromQuestion">⟵ 返回</text>
+  </view>
+
+  <!-- Shuffling -->
+  <view class="shuffling" wx:if="{{phase === 'shuffling'}}">
+    <text class="topic-shuffle-icon" wx:if="{{selectedTopic}}">{{selectedTopic.icon}}</text>
+    <view class="shuffle-cards">
+      <card-face wx:for="{{[0,1,2]}}" wx:key="*this" showBack="{{true}}" size="sm" />
+    </view>
+    <text class="shuffle-text mono neon-text-purple">
+      {{selectedTopic ? selectedTopic.name + ' · 布阵中...' : '混沌洗牌中...'}}
+    </text>
+    <text class="back-btn mono" bindtap="reset">⟵ 返回</text>
+  </view>
+
+  <!-- Table: 散牌桌面 -->
+  <block wx:if="{{phase === 'table' && spreadResult}}">
+    <view class="reveal-header" wx:if="{{selectedTopic}}">
+      <text class="topic-shuffle-icon">{{selectedTopic.icon}}</text>
+      <text class="reveal-title neon-text">{{selectedTopic.name}}</text>
+    </view>
+    <text class="table-hint mono">从牌桌上选取 {{selectedSpread.cardCount}} 张牌</text>
+
+    <!-- 牌位进度面板 -->
+    <view class="slot-panel">
+      <view class="slot-item {{pickIndex > index ? 'slot-filled' : ''}} {{pickIndex === index ? 'slot-active' : ''}}"
+            wx:for="{{spreadResult.cards}}" wx:key="index">
+        <text class="slot-pos mono">{{item.position.name}}</text>
+        <view class="slot-card" wx:if="{{pickIndex > index}}">
+          <text class="slot-card-name">赛博·{{item.card.name}}</text>
+          <text class="slot-card-state mono" wx:if="{{item.isReversed}}">逆</text>
+        </view>
+        <text class="slot-empty mono" wx:else>{{pickIndex === index ? '▸' : '·'}}</text>
+      </view>
+    </view>
+
+    <text class="table-progress mono">{{pickIndex}} / {{selectedSpread.cardCount}}</text>
+
+    <!-- 散牌桌面 -->
+    <view class="card-table">
+      <view class="table-card {{item.removed ? 'table-card-gone' : ''}}"
+            wx:for="{{tableCards}}" wx:key="id"
+            data-tid="{{item.id}}" bindtap="pickFromTable"
+            style="transform: rotate({{item.rot}}deg) translateX({{item.x}}px);">
+        <card-face showBack="{{true}}" size="sm" />
+      </view>
+    </view>
+
+    <text class="reshuffle-btn mono {{pickIndex > 0 ? 'disabled' : ''}}" bindtap="reshuffleTable">🔀 重新洗牌</text>
+    <text class="back-btn mono" bindtap="reset">⟵ 返回</text>
+  </block>
+
+  <!-- Revealed -->
+  <block wx:if="{{phase === 'revealed' && spreadResult}}">
+    <view class="reveal-header" wx:if="{{selectedTopic}}">
+      <text class="topic-shuffle-icon">{{selectedTopic.icon}}</text>
+      <text class="reveal-title neon-text">{{selectedTopic.name}}</text>
+    </view>
+    <text class="reveal-hint mono">解读完成</text>
+    <view class="question-echo glass" wx:if="{{topicQuestion}}">
+      <text class="question-echo-label mono">你的问题：</text>
+      <text class="question-echo-text">{{topicQuestion}}</text>
+    </view>
+
+    <!-- 三体面板: 卦象 + 五行 + 系统标签 -->
+    <block wx:if="{{selectedTopic && hexagram && topicGanZhi}}">
+      <view class="trinity-panel">
+        <view class="trinity-row">
+          <view class="hex-box glass">
+            <view class="hex-top">
+              <text class="hex-symbol">{{hexagram.symbol}}</text>
+              <view class="hex-info">
+                <text class="hex-name neon-text-gold">{{hexagram.name}}卦</text>
+                <text class="hex-trigrams mono">{{hexagram.upper}}上 · {{hexagram.lower}}下</text>
+              </view>
+            </view>
+            <text class="hex-desc">{{hexagram.nature}} · {{hexagram.keywords}}</text>
+          </view>
+          <view class="gz-box glass">
+            <text class="gz-day mono">{{topicGanZhi.gan}}{{topicGanZhi.zhi}}日</text>
+            <text class="gz-element neon-text-gold">{{topicGanZhi.wuxingElement}}</text>
+            <text class="gz-wuxing mono">{{topicGanZhi.wuxing}}</text>
+            <text class="gz-detail mono">{{topicGanZhi.direction}}方 · {{topicGanZhi.color}}色</text>
+          </view>
+        </view>
+        <view class="wuxing-analysis" wx:if="{{wuxingAnalysis}}">
+          <text class="wuxing-label mono">五行 · {{selectedTopic.name}}</text>
+          <text class="wuxing-text">{{wuxingAnalysis}}</text>
+        </view>
+        <view class="trinity-tags">
+          <text class="tag-zhouyi mono">周易</text>
+          <text class="tag-sep">×</text>
+          <text class="tag-wuxing mono">五行</text>
+          <text class="tag-sep">×</text>
+          <text class="tag-tarot mono">塔罗</text>
+        </view>
+      </view>
+    </block>
+
+    <!-- 牌位进度面板(revealed) -->
+    <view class="slot-panel slot-panel-done">
+      <view class="slot-item slot-filled" wx:for="{{spreadResult.cards}}" wx:key="index">
+        <text class="slot-pos mono">{{item.position.name}}</text>
+        <view class="slot-card">
+          <text class="slot-card-name">赛博·{{item.card.name}}</text>
+          <text class="slot-card-state mono" wx:if="{{item.isReversed}}">逆</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="cards-row">
+      <view class="card-slot" wx:for="{{spreadResult.cards}}" wx:key="index">
+        <text class="pos-label mono">{{item.position.name}}</text>
+        <card-face
+          cardId="{{item.card.id}}"
+          reversed="{{item.isReversed}}"
+          size="{{selectedSpread.cardCount === 1 ? 'lg' : 'sm'}}"
+        />
+        <text class="card-label mono">赛博·{{item.card.name}}</text>
+        <text class="card-reversed mono" wx:if="{{item.isReversed}}">⟲ 逆位</text>
+      </view>
+    </view>
+
+    <block wx:if="{{selectedTopic && briefReading}}">
+      <view class="brief-reading glass">
+        <view class="brief-header">
+          <text class="brief-tag mono">简读</text>
+          <text class="brief-free mono">FREE</text>
+        </view>
+        <text class="brief-text">{{briefReading}}</text>
+      </view>
+    </block>
+
+    <view class="deep-teaser" wx:if="{{selectedTopic && !reading}}">
+      <text class="teaser-text">以上是三体基础解读。想知道交叉共振分析、具体行动建议和时机判断吗？</text>
+      <view class="btn-gold" bindtap="requestReading">🔮 查看 AI 深度解读</view>
+    </view>
+
+    <view class="btn-gold" wx:if="{{selectedTopic && reading}}" bindtap="toggleReading">
+      {{showReading ? '📖 收起深度解读' : '📖 查看深度解读'}}
+    </view>
+
+    <view class="teaser glass" wx:if="{{!selectedTopic && !reading}}">
+      <text class="teaser-text">{{selectedSpread.name}}牌阵已完成，隐藏着什么信号？</text>
+    </view>
+    <view class="btn-primary" wx:if="{{!selectedTopic}}" bindtap="requestReading">
+      {{reading ? (showReading ? '📖 收起' : '📖 查看') : '📖 查看完整解读'}}
+    </view>
+
+    <view class="share-row">
+      <button class="share-btn-draw" open-type="share">💾 保存分享图</button>
+      <text class="reset-btn mono" bindtap="backFromResult">⟳ 返回</text>
+    </view>
+
+    <view class="reading glass-no-blur" wx:if="{{showReading}}">
+      <view class="deep-label" wx:if="{{selectedTopic}}">
+        <text class="deep-tag mono">AI 深度解读</text>
+        <text class="deep-sub mono">三体融合</text>
+      </view>
+      <text class="reading-text" wx:if="{{reading}}">{{reading}}</text>
+      <view class="loading-text-wrap" wx:else>
+        <text class="loading-text mono">三体融合解读中</text>
+        <text class="stream-cursor">▍</text>
+      </view>
+    </view>
+  </block>
+
+  <view class="tip-row mono" bindtap="previewTip" wx:if="{{false}}">☕ 赞赏支持（点击查看二维码）</view>
+</view>

@@ -1,0 +1,20 @@
+<view class="card-wrap" style="width:{{dims.w}}rpx;height:{{dims.h}}rpx;" wx:if="{{!showBack}}">
+  <image class="card-img" src="{{imageUrl}}" mode="aspectFill" lazy-load />
+  <view class="card-overlay"></view>
+  <view class="card-neon-border"></view>
+
+  <!-- Card name -->
+  <view class="card-name-area">
+    <text class="card-name neon-text">赛博·{{cardName}}</text>
+    <text class="card-cyber mono" wx:if="{{size !== 'sm'}}">[ {{cyberName}} ]</text>
+  </view>
+
+  <!-- Reversed badge -->
+  <view class="reversed-badge mono" wx:if="{{reversed}}">⟲ 逆位</view>
+</view>
+
+<!-- Card Back -->
+<view class="card-back" style="width:{{dims.w}}rpx;height:{{dims.h}}rpx;" wx:if="{{showBack}}">
+  <view class="back-pattern"></view>
+  <text class="back-glyph">☰</text>
+</view>

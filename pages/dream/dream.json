@@ -1,0 +1,5 @@
+{
+  "usingComponents": {
+    "card-face": "/components/card-face/card-face"
+  }
+}

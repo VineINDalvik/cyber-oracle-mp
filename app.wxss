@@ -1,0 +1,102 @@
+/* ─── Cyber Oracle Global Styles ─────────────────────────────── */
+
+page {
+  background: #0a0a0f;
+  color: #e0e0ff;
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  min-height: 100vh;
+  --neon-cyan: #00f0ff;
+  --neon-purple: #bf00ff;
+  --neon-pink: #ff00aa;
+  --neon-gold: #ffb800;
+  --surface: #12121f;
+  --card-dark: #1a1a2e;
+  --card-border: #2a2a4a;
+  --fg: #e0e0ff;
+}
+
+.glass {
+  background: rgba(18, 18, 31, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1rpx solid rgba(0, 240, 255, 0.1);
+}
+
+.glass-no-blur {
+  background: rgba(18, 18, 31, 0.92);
+  border: 1rpx solid rgba(255, 255, 255, 0.08);
+}
+
+.neon-text {
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.5), 0 0 40px rgba(0, 240, 255, 0.2);
+  color: var(--neon-cyan);
+}
+
+.neon-text-purple {
+  text-shadow: 0 0 10px rgba(191, 0, 255, 0.5), 0 0 40px rgba(191, 0, 255, 0.2);
+  color: var(--neon-purple);
+}
+
+.neon-text-gold {
+  color: var(--neon-gold);
+}
+
+.stamp {
+  border: 4rpx solid var(--neon-pink);
+  color: var(--neon-pink);
+  transform: rotate(-12deg);
+  padding: 8rpx 28rpx;
+  font-weight: 700;
+  letter-spacing: 4rpx;
+  opacity: 0.9;
+  display: inline-block;
+  font-size: 24rpx;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, rgba(0,240,255,0.15), rgba(191,0,255,0.15));
+  border: 1rpx solid rgba(0,240,255,0.2);
+  color: var(--neon-cyan);
+  font-size: 26rpx;
+  padding: 24rpx 0;
+  border-radius: 20rpx;
+  text-align: center;
+  width: 100%;
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+.btn-secondary {
+  background: rgba(18, 18, 31, 0.8);
+  border: 1rpx solid rgba(0,240,255,0.1);
+  color: rgba(224, 224, 255, 0.4);
+  font-size: 24rpx;
+  padding: 24rpx 0;
+  border-radius: 20rpx;
+  text-align: center;
+}
+
+.section-label {
+  font-size: 20rpx;
+  color: rgba(224, 224, 255, 0.2);
+  letter-spacing: 4rpx;
+  text-align: center;
+}
+
+.mono {
+  font-family: Menlo, "SF Mono", "Courier New", monospace;
+}
+
+.tip-row {
+  margin: 36rpx auto 48rpx;
+  text-align: center;
+  font-size: 22rpx;
+  color: rgba(224, 224, 255, 0.25);
+}
+
+.tip-row:active {
+  opacity: 0.8;
+}

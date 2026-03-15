@@ -1,0 +1,189 @@
+<view class="page">
+  <!-- Header -->
+  <view class="header">
+    <text class="section-label">TODAY'S CYBER SIGN</text>
+    <text class="date mono">{{dateStr}} · 周{{weekday}}</text>
+    <view class="ganzhi-badge glass">
+      <text class="gz-text">{{ganZhi.gan}}{{ganZhi.zhi}}日</text>
+      <text class="gz-sep">·</text>
+      <text class="gz-wx mono">{{ganZhi.wuxing}}</text>
+      <text class="gz-sep">·</text>
+      <text class="gz-detail mono">{{ganZhi.wuxingElement}}行 · {{ganZhi.direction}}方 · {{ganZhi.color}}色</text>
+    </view>
+
+    <!-- Birth & Daily buttons -->
+    <view class="profile-btns">
+      <view class="profile-btn birth-btn" bindtap="openBirth">
+        <text>✨ 生辰档案</text>
+        <text wx:if="{{birthHasFilled}}" class="profile-tag gold"> · 已填</text>
+      </view>
+      <view class="profile-btn daily-btn glass" bindtap="openDaily">
+        <text>🗓️ 今日状态</text>
+        <text wx:if="{{dailyHasFilled}}" class="profile-tag cyan"> · 已设</text>
+        <text wx:else class="profile-tag dim"> · 可跳过</text>
+      </view>
+    </view>
+
+    <view class="status-hint" wx:if="{{weatherText || moodText}}">
+      <text wx:if="{{weatherText}}">天气{{weatherText}}</text>
+      <text wx:if="{{weatherText && moodText}}"> · </text>
+      <text wx:if="{{moodText}}">心情{{moodText}}</text>
+    </view>
+  </view>
+
+  <!-- Card -->
+  <view class="card-area" wx:if="{{result}}">
+    <block wx:if="{{picked}}">
+      <card-face cardId="{{result.card.id}}" reversed="{{result.isReversed}}" size="lg" />
+    </block>
+    <block wx:else>
+      <scroll-view class="pick-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+        <view class="pick-row">
+          <view class="pick-item" wx:for="{{[0,1,2,3,4]}}" wx:key="*this" data-idx="{{item}}" bindtap="pickCard">
+            <card-face showBack="{{true}}" size="sm" />
+          </view>
+        </view>
+      </scroll-view>
+      <text class="pick-hint mono">左右滑动选一张（选哪张真的会影响结果）</text>
+    </block>
+  </view>
+
+  <!-- Fortune (only after pick) -->
+  <text class="fortune" wx:if="{{picked}}">{{result.fortune}}</text>
+
+  <!-- Label (only after pick) -->
+  <view class="label-area" wx:if="{{picked}}">
+    <text class="stamp">{{result.label}}</text>
+  </view>
+
+  <!-- Daily Calendar: 宜忌 (only after pick) -->
+  <view class="calendar-card glass" wx:if="{{picked && calendar}}">
+    <view class="calendar-header">
+      <text class="calendar-title mono">今日宜忌</text>
+      <text class="calendar-hint mono">
+        <text wx:if="{{weatherText}}">天气{{weatherText}}</text>
+        <text wx:if="{{weatherText && moodText}}"> · </text>
+        <text wx:if="{{moodText}}">心情{{moodText}}</text>
+      </text>
+    </view>
+    <view class="calendar-row">
+      <text class="tag-yi">宜</text>
+      <text class="tag-item" wx:for="{{calendar.yi}}" wx:key="*this">{{item}}</text>
+    </view>
+    <view class="calendar-row">
+      <text class="tag-ji">忌</text>
+      <text class="tag-item" wx:for="{{calendar.ji}}" wx:key="*this">{{item}}</text>
+    </view>
+    <view class="calendar-advice">
+      <text class="advice-label">建议</text>
+      <text class="advice-text">{{calendar.advice}}</text>
+    </view>
+  </view>
+
+  <!-- Derivation (only after pick) -->
+  <text class="derivation mono" wx:if="{{picked}}">{{derivation}}</text>
+
+  <!-- Teaser -->
+  <view class="teaser glass" wx:if="{{!reading && picked}}">
+    <text class="teaser-text">今日{{ganZhi.gan}}{{ganZhi.zhi}}，{{ganZhi.wuxing}}之气与赛博·{{result.card.name}}的深层共振尚未完全解码...</text>
+  </view>
+
+  <!-- Buttons -->
+  <view class="btn-row">
+    <view class="btn-primary" bindtap="requestReading">
+      {{picked ? (reading ? (showReading ? '📖 收起' : '📖 查看') : '📖 完整解读') : '先选牌'}}
+    </view>
+    <button class="share-btn" open-type="share">💾 保存分享图</button>
+  </view>
+
+  <!-- Reading -->
+  <view class="reading glass-no-blur" wx:if="{{showReading}}">
+    <text class="reading-text" wx:if="{{reading}}">{{reading}}</text>
+    <view class="loading-text-wrap" wx:else>
+      <text class="loading-text mono">正在连接赛博矩阵</text>
+      <text class="stream-cursor">▍</text>
+    </view>
+  </view>
+
+  <!-- Collection -->
+  <view class="collection-bar glass">
+    <text class="coll-label mono">塔罗图鉴 {{collectionCount}}/22</text>
+    <text class="coll-credits mono">{{collectionCount}}/22</text>
+  </view>
+
+  <view class="tip-row mono" bindtap="previewTip" wx:if="{{false}}">☕ 赞赏支持（点击查看二维码）</view>
+
+  <!-- Birth Profile Modal -->
+  <view class="modal-mask" wx:if="{{showBirth}}" bindtap="closeBirth">
+    <view class="modal-panel glass" catchtap="noop">
+      <text class="modal-title neon-text">生辰档案</text>
+      <text class="modal-sub mono">填一次就够；会在服务端做 7 天缓存</text>
+
+      <view class="form-row">
+        <text class="label mono">生辰（年月日）</text>
+        <picker mode="date" value="{{birth.birthDate}}" start="1940-01-01" bindchange="onBirthDateChange">
+          <view class="picker glass"><text class="mono">{{birth.birthDate || '选择日期'}}</text></view>
+        </picker>
+      </view>
+
+      <view class="form-row">
+        <text class="label mono">出生时辰（可不填）</text>
+        <picker mode="selector" range="{{shichenOptions}}" range-key="label" bindchange="onBirthTimeChange">
+          <view class="picker glass"><text class="mono">{{birth.birthTime || '不设置'}}</text></view>
+        </picker>
+      </view>
+
+      <view class="btns">
+        <view class="btn-primary" bindtap="saveBirthProfile">保存并重新抽牌</view>
+        <view class="btn-secondary" bindtap="clearBirthProfile">清空</view>
+      </view>
+
+      <text class="modal-foot mono">生辰档案会同步到服务端（7天缓存）。</text>
+    </view>
+  </view>
+
+  <!-- Daily State Modal -->
+  <view class="modal-mask" wx:if="{{showDaily}}" bindtap="closeDaily">
+    <view class="modal-panel glass" catchtap="noop">
+      <text class="modal-title neon-text">今日状态</text>
+      <text class="modal-sub mono">只影响今天；不填也能抽</text>
+
+      <view class="form-grid">
+        <view class="form-row half">
+          <text class="label mono">睡眠</text>
+          <picker mode="selector" range="{{sleepOptions}}" range-key="label" bindchange="onDailySleepChange">
+            <view class="picker glass"><text class="mono">{{daily.sleep ? sleepOptions[daily.sleep === 'good' ? 1 : daily.sleep === 'ok' ? 2 : daily.sleep === 'bad' ? 3 : 0].label : '不设置'}}</text></view>
+          </picker>
+        </view>
+        <view class="form-row half">
+          <text class="label mono">压力</text>
+          <picker mode="selector" range="{{stressOptions}}" range-key="label" bindchange="onDailyStressChange">
+            <view class="picker glass"><text class="mono">{{daily.stress ? stressOptions[daily.stress === 'low' ? 1 : daily.stress === 'mid' ? 2 : daily.stress === 'high' ? 3 : 0].label : '不设置'}}</text></view>
+          </picker>
+        </view>
+      </view>
+
+      <view class="form-grid">
+        <view class="form-row half">
+          <text class="label mono">心情</text>
+          <picker mode="selector" range="{{moodOptions}}" range-key="label" bindchange="onDailyMoodChange">
+            <view class="picker glass"><text class="mono">{{daily.mood ? moodOptions[daily.mood === 'low' ? 1 : daily.mood === 'mid' ? 2 : daily.mood === 'high' ? 3 : 0].label : '不设置'}}</text></view>
+          </picker>
+        </view>
+        <view class="form-row half">
+          <text class="label mono">天气</text>
+          <picker mode="selector" range="{{weatherOptions}}" range-key="label" bindchange="onDailyWeatherChange">
+            <view class="picker glass"><text class="mono">{{daily.weather ? weatherOptions[daily.weather === 'sunny' ? 1 : daily.weather === 'cloudy' ? 2 : daily.weather === 'rain' ? 3 : daily.weather === 'snow' ? 4 : daily.weather === 'wind' ? 5 : daily.weather === 'fog' ? 6 : daily.weather === 'hot' ? 7 : daily.weather === 'cold' ? 8 : 0].label : '不设置'}}</text></view>
+          </picker>
+        </view>
+      </view>
+
+      <view class="btns">
+        <view class="btn-primary" bindtap="saveDailyState">保存并重新抽牌</view>
+        <view class="btn-secondary" bindtap="clearDailyState">清空</view>
+      </view>
+
+      <text class="modal-foot mono">今日状态按天保存；只用来影响今天的解读。</text>
+    </view>
+  </view>
+</view>

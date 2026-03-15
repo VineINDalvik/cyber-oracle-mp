@@ -1,0 +1,150 @@
+<view class="page">
+  <!-- Topic selection -->
+  <block wx:if="{{phase === 'topic'}}">
+    <text class="section-label">COMPATIBILITY</text>
+    <text class="page-title neon-text-purple">合盘</text>
+    <text class="page-subtitle">两个人各抽一张牌，看命运如何交织</text>
+    <view class="topic-list">
+      <view class="topic-item glass" wx:for="{{topics}}" wx:key="id" data-idx="{{index}}" bindtap="selectTopic">
+        <text class="t-icon">{{item.icon}}</text>
+        <text class="t-name">{{item.name}}</text>
+        <text class="t-desc">{{item.desc}}</text>
+      </view>
+    </view>
+    <view class="code-entry-divider">
+      <view class="divider-line"></view>
+      <text class="divider-text mono">有口令？</text>
+      <view class="divider-line"></view>
+    </view>
+    <view class="code-entry-btn glass" bindtap="goCodeInput">
+      <text class="code-entry-text mono">输入口令</text>
+    </view>
+  </block>
+
+  <!-- Code input -->
+  <block wx:if="{{phase === 'code-input'}}">
+    <text class="section-label">COMPATIBILITY</text>
+    <text class="page-title neon-text-purple">输入口令</text>
+    <text class="page-subtitle">对方发给你的口令，有效期 24 小时</text>
+    <text class="demo-hint mono">想先看界面？输入 <text class="demo-code">DEMO</text></text>
+    <view class="code-input-row">
+      <input class="code-input glass mono" value="{{codeInput}}" bindinput="onCodeInput" placeholder="例如 8C2KQ1AB" maxlength="16" />
+      <view class="code-submit-btn {{codeInput.length < 3 ? 'disabled' : ''}}" bindtap="submitCode">
+        <text class="code-submit-text mono">确认</text>
+      </view>
+    </view>
+    <text class="back-btn mono" bindtap="backFromCode">⟵ 返回</text>
+  </block>
+
+  <!-- A draw -->
+  <block wx:if="{{phase === 'a-draw'}}">
+    <text class="back-btn mono" bindtap="reset">⟵ 返回</text>
+    <text class="t-icon big">{{topic.icon}}</text>
+    <text class="phase-title neon-text-purple">{{topic.name}}</text>
+    <text class="phase-hint">你先抽一张，然后让对方也来抽</text>
+    <view class="card-area" wx:if="{{!aResult}}" bindtap="drawA">
+      <card-face showBack="{{true}}" size="lg" />
+      <text class="tap-hint mono">点击抽牌</text>
+    </view>
+    <view class="card-area" wx:if="{{aResult && !aRevealed}}" bindtap="revealA">
+      <card-face showBack="{{true}}" size="lg" />
+      <text class="tap-hint mono">点击翻牌</text>
+    </view>
+    <view class="card-area" wx:if="{{aResult && aRevealed}}">
+      <card-face cardId="{{aResult.cards[0].card.id}}" reversed="{{aResult.cards[0].isReversed}}" size="lg" />
+    </view>
+  </block>
+
+  <!-- A done -->
+  <block wx:if="{{phase === 'a-done' && aResult}}">
+    <view class="card-area">
+      <card-face cardId="{{aResult.cards[0].card.id}}" reversed="{{aResult.cards[0].isReversed}}" size="md" />
+    </view>
+    <text class="result-label mono">你抽到了：赛博·{{aResult.cards[0].card.name}}</text>
+    <view class="code-box glass">
+      <text class="code-hint">把链接发给对方，让 TA 来抽自己的牌</text>
+      <text class="code-link mono" selectable="true">{{shareCode ? 'https://cyber.vinex.top/?mode=compat&code=' + shareCode : '生成中...'}}</text>
+      <view class="code-actions">
+        <view class="code-action-btn" bindtap="copyLink">复制链接</view>
+        <view class="code-action-btn secondary" bindtap="goToBDraw">同机继续</view>
+      </view>
+      <text class="code-expire mono">有效期 24 小时</text>
+    </view>
+    <view class="divider-row">
+      <view class="divider-line"></view>
+      <text class="divider-text mono">或</text>
+      <view class="divider-line"></view>
+    </view>
+    <view class="btn-primary" style="background:rgba(191,0,255,0.1);border-color:rgba(191,0,255,0.2);color:#bf00ff;" bindtap="goToBDraw">
+      🎴 直接帮对方抽（面对面）
+    </view>
+    <text class="reset-btn mono" bindtap="reset">⟳ 重来</text>
+  </block>
+
+  <!-- B draw -->
+  <block wx:if="{{phase === 'b-draw'}}">
+    <text class="back-btn mono" bindtap="reset">⟵ 返回</text>
+    <text class="phase-title neon-text">对方的回合</text>
+    <view class="a-card-hint glass" wx:if="{{aResult && aRevealed}}">
+      <card-face cardId="{{aResult.cards[0].card.id}}" reversed="{{aResult.cards[0].isReversed}}" size="sm" />
+      <text class="a-card-label mono">甲方：赛博·{{aResult.cards[0].card.name}}</text>
+    </view>
+    <view class="card-area" wx:if="{{!bResult}}" bindtap="drawB">
+      <card-face showBack="{{true}}" size="lg" />
+      <text class="tap-hint mono neon-text-purple">点击抽牌</text>
+    </view>
+    <view class="card-area" wx:if="{{bResult && !bRevealed}}" bindtap="revealB">
+      <card-face showBack="{{true}}" size="lg" />
+      <text class="tap-hint mono">点击翻牌</text>
+    </view>
+    <view class="card-area" wx:if="{{bResult && bRevealed}}">
+      <card-face cardId="{{bResult.cards[0].card.id}}" reversed="{{bResult.cards[0].isReversed}}" size="lg" />
+    </view>
+  </block>
+
+  <!-- B done -->
+  <block wx:if="{{phase === 'b-done' && aResult && bResult}}">
+    <text class="t-icon big">{{topic.icon}}</text>
+    <text class="phase-title neon-text-purple">{{topic.name}}结果</text>
+    <view class="pair-row">
+      <view class="pair-item">
+        <text class="pair-label mono">甲方</text>
+        <card-face cardId="{{aResult.cards[0].card.id}}" reversed="{{aResult.cards[0].isReversed}}" size="sm" />
+        <text class="pair-name mono neon-text">赛博·{{aResult.cards[0].card.name}}</text>
+      </view>
+      <text class="pair-x">×</text>
+      <view class="pair-item">
+        <text class="pair-label mono">乙方</text>
+        <card-face cardId="{{bResult.cards[0].card.id}}" reversed="{{bResult.cards[0].isReversed}}" size="sm" />
+        <text class="pair-name mono neon-text-purple">赛博·{{bResult.cards[0].card.name}}</text>
+      </view>
+    </view>
+    <view class="btn-primary" bindtap="requestReading">📖 查看合盘解读</view>
+    <button class="share-btn-compat" open-type="share">💾 分享给对方</button>
+    <text class="reset-btn mono" bindtap="reset">⟳ 重来</text>
+  </block>
+
+  <!-- Result -->
+  <block wx:if="{{phase === 'result' && aResult && bResult}}">
+    <text class="t-icon big">{{topic.icon}}</text>
+    <text class="phase-title neon-text-purple">{{topic.name}}解读</text>
+    <view class="pair-row small">
+      <card-face cardId="{{aResult.cards[0].card.id}}" reversed="{{aResult.cards[0].isReversed}}" size="sm" />
+      <text class="pair-x">×</text>
+      <card-face cardId="{{bResult.cards[0].card.id}}" reversed="{{bResult.cards[0].isReversed}}" size="sm" />
+    </view>
+    <view class="reading glass-no-blur">
+      <text class="reading-text" wx:if="{{reading}}">{{reading}}</text>
+      <view class="loading-text-wrap" wx:else>
+        <text class="loading-text mono">合盘解读生成中</text>
+        <text class="stream-cursor">▍</text>
+      </view>
+    </view>
+    <view class="share-row">
+      <button class="share-btn-compat" open-type="share">💾 保存分享图</button>
+      <text class="reset-btn mono" bindtap="reset">⟳ 重新合盘</text>
+    </view>
+  </block>
+
+  <view class="tip-row mono" bindtap="previewTip" wx:if="{{false}}">☕ 赞赏支持（点击查看二维码）</view>
+</view>

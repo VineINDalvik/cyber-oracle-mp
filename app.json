@@ -1,0 +1,32 @@
+{
+  "pages": [
+    "pages/daily/daily",
+    "pages/draw/draw",
+    "pages/compat/compat",
+    "pages/dream/dream",
+    "pages/index/index"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#0a0a0f",
+    "navigationBarTitleText": "赛博神算子",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#0a0a0f",
+    "backgroundTextStyle": "light"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#4a4a6a",
+    "selectedColor": "#00f0ff",
+    "backgroundColor": "#12121f",
+    "borderStyle": "black",
+    "list": [
+      { "pagePath": "pages/daily/daily", "text": "每日签" },
+      { "pagePath": "pages/draw/draw", "text": "牌阵" },
+      { "pagePath": "pages/compat/compat", "text": "合盘" },
+      { "pagePath": "pages/dream/dream", "text": "解梦" }
+    ]
+  },
+  "usingComponents": {},
+  "sitemapLocation": "sitemap.json",
+  "style": "v2"
+}

@@ -1,0 +1,80 @@
+<view class="page">
+  <!-- Input -->
+  <block wx:if="{{phase === 'input'}}">
+    <text class="section-label">DREAM DECODER</text>
+    <text class="page-title neon-text-purple">梦境解码</text>
+    <text class="page-subtitle">周公解梦 × 赛博塔罗，双重视角解析</text>
+
+    <!-- Tips card -->
+    <view class="tips-card glass">
+      <text class="tips-title mono">怎么写更准？</text>
+      <text class="tips-text">写清楚「场景」「人物/物件」「情绪」「结尾」，越具体越好。</text>
+      <view class="tips-btns">
+        <view class="tips-btn fill-btn" bindtap="fillExample">一键填充示例</view>
+        <view class="tips-btn clear-btn" bindtap="clearDream">清空</view>
+      </view>
+    </view>
+
+    <view class="input-box glass">
+      <textarea class="dream-input" value="{{dream}}" bindinput="onDreamInput"
+        placeholder="{{hint}}" placeholder-class="placeholder" maxlength="500" />
+      <view class="input-footer">
+        <text class="char-count mono">{{dream.length}}/500</text>
+        <text class="change-hint mono" bindtap="changeHint">换个示例</text>
+      </view>
+    </view>
+    <view class="btn-primary dream-btn" bindtap="startAnalysis">
+      🔮 解析梦境
+    </view>
+    <text class="dream-foot mono">解析后可「生成梦境分享图」发朋友圈</text>
+  </block>
+
+  <!-- Analyzing -->
+  <view class="analyzing" wx:if="{{phase === 'analyzing'}}">
+    <view class="pulse-circle"></view>
+    <text class="analyzing-text mono neon-text-purple">正在解析梦境信号...</text>
+    <text class="back-btn mono" bindtap="reset">⟵ 返回</text>
+  </view>
+
+  <!-- Result -->
+  <block wx:if="{{phase === 'result' && result}}">
+    <text class="section-label">DREAM MATCHED</text>
+    <text class="match-title neon-text-purple">你的梦境对应：赛博·{{result.card.name}}</text>
+    <view class="card-area">
+      <card-face cardId="{{result.card.id}}" reversed="{{result.isReversed}}" size="md" />
+    </view>
+    <view class="dream-excerpt glass">
+      <text class="excerpt-label mono">你的梦境：</text>
+      <text class="excerpt-text">{{dream}}</text>
+    </view>
+
+    <block wx:if="{{!reading}}">
+      <view class="teaser glass">
+        <text class="teaser-text">赛博·{{result.card.name}}与你的梦境产生了共振，周公解梦 × 塔罗原型的双重解析即将揭示...</text>
+      </view>
+      <view class="btn-primary dream-btn" bindtap="requestReading">
+        📖 查看梦境解读
+      </view>
+    </block>
+    <view class="reading glass-no-blur" wx:if="{{isLoading && !reading}}">
+      <text class="reading-label mono">周公 × 塔罗 双重解析</text>
+      <view class="loading-text-wrap">
+        <text class="loading-text mono">正在深度解析</text>
+        <text class="stream-cursor">▍</text>
+      </view>
+    </view>
+    <block wx:elif="{{reading}}">
+      <view class="reading glass-no-blur">
+        <text class="reading-label mono">周公 × 塔罗 双重解析</text>
+        <text class="reading-text">{{reading}}</text>
+      </view>
+    </block>
+
+    <view class="action-row">
+      <view class="btn-secondary" bindtap="reset">⟳ 解析新梦境</view>
+      <button class="share-btn-sm" open-type="share">💾 分享</button>
+    </view>
+  </block>
+
+  <view class="tip-row mono" bindtap="previewTip" wx:if="{{false}}">☕ 赞赏支持（点击查看二维码）</view>
+</view>
