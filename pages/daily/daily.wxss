@@ -139,6 +139,124 @@
 .coll-label { font-size: 18rpx; color: rgba(224,224,255,0.3); }
 .coll-credits { font-size: 18rpx; color: rgba(255,184,0,0.5); }
 
+/* ====== Share Card Modal ====== */
+.sc-mask {
+  position: fixed; left: 0; top: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex; align-items: flex-end; justify-content: center;
+  z-index: 1000;
+}
+.sc-panel {
+  width: 100%; max-width: 700rpx;
+  background: #0d0d1e;
+  border-radius: 40rpx 40rpx 0 0;
+  padding: 20rpx 0 0;
+  display: flex; flex-direction: column; align-items: center;
+  max-height: 92vh;
+  border-top: 1rpx solid rgba(0,240,255,0.12);
+}
+.sc-close {
+  position: absolute; top: 28rpx; left: 32rpx;
+  width: 60rpx; height: 60rpx; border-radius: 50%;
+  background: rgba(255,255,255,0.06); border: 1rpx solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36rpx; color: rgba(224,224,255,0.5); line-height: 1;
+  text-align: center;
+}
+.sc-top-label {
+  display: block; text-align: center;
+  font-size: 18rpx; color: rgba(224,224,255,0.2); letter-spacing: 3rpx;
+  margin-bottom: 20rpx;
+}
+
+/* 卡片预览滚动区 */
+.sc-scroll { width: 100%; flex: 1; }
+.sc-scroll-padding { height: 20rpx; }
+
+.sc-card-wrap {
+  margin: 0 32rpx; border-radius: 28rpx;
+  overflow: hidden;
+  border: 1rpx solid rgba(255,255,255,0.08);
+}
+.sc-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 24rpx 28rpx 12rpx;
+  background: linear-gradient(180deg, rgba(10,10,15,1), rgba(16,16,40,1));
+}
+.sc-brand { font-size: 16rpx; color: rgba(255,255,255,0.15); letter-spacing: 6rpx; }
+.sc-date-label { font-size: 18rpx; color: rgba(255,255,255,0.3); }
+
+.sc-fortune-label-row {
+  padding: 0 28rpx 16rpx;
+  background: linear-gradient(180deg, rgba(16,16,40,1), rgba(12,12,30,1));
+  display: flex; align-items: center;
+}
+.sc-stamp {
+  font-size: 22rpx; font-weight: bold;
+  color: rgba(233,69,96,0.85);
+  border: 2rpx solid rgba(233,69,96,0.35);
+  border-radius: 8rpx; padding: 4rpx 20rpx;
+  transform: rotate(-2deg);
+  display: inline-block;
+}
+
+.sc-card-face {
+  display: flex; justify-content: center; align-items: center;
+  padding: 20rpx 0 28rpx;
+  background: linear-gradient(180deg, rgba(12,12,30,1), rgba(16,16,42,1));
+}
+.sc-divider {
+  height: 1rpx; margin: 0 28rpx;
+  background: rgba(255,255,255,0.06);
+}
+.sc-fortune-text {
+  display: block; padding: 28rpx 28rpx 24rpx;
+  font-size: 26rpx; color: rgba(224,224,255,0.65);
+  line-height: 1.85; text-align: center;
+  white-space: pre-wrap; word-break: break-word;
+  background: rgba(16,16,42,1);
+}
+.sc-footer {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  padding: 12rpx 28rpx 24rpx;
+  background: rgba(10,10,24,1);
+  border-top: 1rpx solid rgba(255,255,255,0.05);
+}
+.sc-footer-left { display: flex; flex-direction: column; gap: 4rpx; }
+.sc-gz { font-size: 18rpx; color: rgba(255,184,0,0.3); }
+.sc-card-name { font-size: 18rpx; color: rgba(0,240,255,0.3); }
+.sc-site { font-size: 16rpx; color: rgba(255,255,255,0.1); }
+
+/* 操作按钮 */
+.sc-actions {
+  display: flex; gap: 20rpx;
+  padding: 24rpx 32rpx 8rpx; width: 100%;
+}
+.sc-btn-save {
+  flex: 1; padding: 28rpx 0; border-radius: 20rpx; text-align: center;
+  background: linear-gradient(135deg, rgba(0,240,255,0.12), rgba(168,85,247,0.12));
+  border: 1rpx solid rgba(0,240,255,0.25);
+  color: rgba(0,240,255,0.85); font-size: 26rpx; font-weight: bold;
+  transition: opacity 0.2s;
+}
+.sc-btn-save.loading { opacity: 0.5; }
+.sc-btn-share {
+  flex: 1; padding: 28rpx 0; border-radius: 20rpx; text-align: center;
+  background: rgba(233,69,96,0.08);
+  border: 1rpx solid rgba(233,69,96,0.25) !important;
+  color: rgba(233,69,96,0.8) !important; font-size: 26rpx; font-weight: bold;
+  line-height: 1;
+  /* reset button默认样式 */
+  margin: 0 !important; min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+.sc-btn-share::after { border: none !important; }
+.sc-hint {
+  display: block; text-align: center;
+  font-size: 18rpx; color: rgba(224,224,255,0.18);
+  padding: 4rpx 0 env(safe-area-inset-bottom, 24rpx);
+}
+
 /* Modal */
 .modal-mask {
   position: fixed;

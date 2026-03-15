@@ -93,7 +93,64 @@
     <view class="btn-primary" bindtap="requestReading">
       {{picked ? (reading ? (showReading ? '📖 收起' : '📖 查看') : '📖 完整解读') : '先选牌'}}
     </view>
-    <view class="share-btn glass" bindtap="showShareOptions" wx:if="{{picked}}">📤 分享/保存</view>
+    <view class="share-btn glass" bindtap="showShareOptions" wx:if="{{picked}}">📤 分享</view>
+  </view>
+
+  <!-- Share Card Modal -->
+  <view class="sc-mask" wx:if="{{showShareCard}}" bindtap="closeShareCard">
+    <view class="sc-panel" catchtap="noop">
+      <!-- 关闭按钮 -->
+      <view class="sc-close" bindtap="closeShareCard">×</view>
+      <text class="sc-top-label mono">📅 每日签</text>
+
+      <!-- 卡片预览（和 web 端一致的视觉） -->
+      <scroll-view class="sc-scroll" scroll-y enhanced>
+        <view class="sc-card-wrap glass">
+          <!-- 顶部 -->
+          <view class="sc-header">
+            <text class="sc-brand mono">CYBER ORACLE</text>
+            <text class="sc-date-label mono">{{dateStr}}</text>
+          </view>
+
+          <!-- 签文标签 -->
+          <view class="sc-fortune-label-row">
+            <text class="sc-stamp">{{result.label}}</text>
+          </view>
+
+          <!-- 牌面 -->
+          <view class="sc-card-face">
+            <card-face cardId="{{result.card.id}}" reversed="{{result.isReversed}}" size="lg" />
+          </view>
+
+          <!-- 分割线 -->
+          <view class="sc-divider"></view>
+
+          <!-- 签文 -->
+          <text class="sc-fortune-text">{{result.fortune}}</text>
+
+          <!-- 底部信息 -->
+          <view class="sc-footer">
+            <view class="sc-footer-left">
+              <text class="sc-gz mono">{{ganZhi.gan}}{{ganZhi.zhi}}日 · {{ganZhi.wuxing}}</text>
+              <text class="sc-card-name mono">赛博·{{result.card.name}} {{result.isReversed ? '⟲逆位' : '⬆正位'}}</text>
+            </view>
+            <text class="sc-site mono">cyber.vinex.top</text>
+          </view>
+        </view>
+        <view class="sc-scroll-padding"></view>
+      </scroll-view>
+
+      <!-- 操作按钮 -->
+      <view class="sc-actions">
+        <view class="sc-btn-save {{shareCardLoading ? 'loading' : ''}}" bindtap="saveShareCard">
+          <text wx:if="{{shareCardLoading}}">⏳ 生成中...</text>
+          <text wx:elif="{{shareCardPath}}">💾 再次保存</text>
+          <text wx:else>💾 保存到相册</text>
+        </view>
+        <button class="sc-btn-share" open-type="share">📤 分享给朋友</button>
+      </view>
+      <text class="sc-hint mono">保存后可发图片给朋友 · 长按预览图也可保存</text>
+    </view>
   </view>
 
   <!-- Reading -->

@@ -56,4 +56,37 @@ function requestJson(path, method, data) {
   });
 }
 
-module.exports = { streamReading, getCardImageUrl, requestJson };
+/**
+ * 调服务端 /api/share-card 生成分享图 PNG，写入临时文件并返回 tempFilePath
+ * 供 wx.saveImageToPhotosAlbum 或 wx.shareAppMessage.imageUrl 使用
+ */
+function generateShareCard(params) {
+  return new Promise(function(resolve, reject) {
+    wx.request({
+      url: getApiBase() + '/api/share-card',
+      method: 'POST',
+      data: params,
+      dataType: '其他',
+      responseType: 'arraybuffer',
+      timeout: 30000,
+      header: { 'Content-Type': 'application/json' },
+      success: function(res) {
+        if (res.statusCode === 200 && res.data) {
+          var tmpPath = wx.env.USER_DATA_PATH + '/co-share-' + Date.now() + '.png';
+          wx.getFileSystemManager().writeFile({
+            filePath: tmpPath,
+            data: res.data,
+            encoding: 'binary',
+            success: function() { resolve(tmpPath); },
+            fail: function(e) { reject(new Error(e.errMsg || 'writeFile fail')); },
+          });
+        } else {
+          reject(new Error('HTTP ' + res.statusCode));
+        }
+      },
+      fail: function(e) { reject(new Error(e.errMsg || 'request fail')); },
+    });
+  });
+}
+
+module.exports = { streamReading, getCardImageUrl, requestJson, generateShareCard };

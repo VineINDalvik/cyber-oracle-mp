@@ -132,6 +132,9 @@ Page({
 
     showBirth: false,
     showDaily: false,
+    showShareCard: false,
+    shareCardLoading: false,
+    shareCardPath: '',
 
     sleepOptions: [
       { value: '', label: '不设置' },
@@ -434,24 +437,65 @@ Page({
   },
 
   showShareOptions() {
+    this.setData({ showShareCard: true, shareCardPath: '' });
+  },
+
+  closeShareCard() {
+    this.setData({ showShareCard: false, shareCardLoading: false });
+  },
+
+  _buildShareParams() {
+    var result = this.data.result;
+    var gz = this.data.ganZhi;
+    return {
+      cardId: result.card.id,
+      cardName: result.card.name,
+      cyberName: result.card.cyberName,
+      isReversed: result.isReversed,
+      fortune: result.fortune,
+      label: result.label,
+      mode: 'daily',
+      modeLabel: '每日签',
+      dateStr: this.data.dateStr,
+      ganZhi: gz ? gz.gan + gz.zhi + '日' : '',
+      wuxing: gz ? gz.wuxing : '',
+    };
+  },
+
+  saveShareCard() {
+    if (this.data.shareCardLoading) return;
     var self = this;
-    var result = self.data.result;
-    var cardName = result ? ('赛博·' + result.card.name) : '今日签';
-    wx.showActionSheet({
-      itemList: ['分享给朋友', '分享到朋友圈', '截图保存（长按图片）'],
-      success: function(res) {
-        if (res.tapIndex === 0) {
-          wx.showShareMenu({ withShareTicket: true, menus: ['shareAppMessage'] });
-          // 触发系统分享
-          wx.shareAppMessage({
-            title: '今天的赛博签是「' + cardName + '」，你来测一下吧',
-            path: '/pages/daily/daily',
+    // 如果已生成，直接保存
+    if (self.data.shareCardPath) {
+      self._doSave(self.data.shareCardPath);
+      return;
+    }
+    self.setData({ shareCardLoading: true });
+    api.generateShareCard(self._buildShareParams()).then(function(tmpPath) {
+      self.setData({ shareCardLoading: false, shareCardPath: tmpPath });
+      self._doSave(tmpPath);
+    }).catch(function(e) {
+      self.setData({ shareCardLoading: false });
+      wx.showToast({ title: '生成失败，可截图保存', icon: 'none', duration: 2500 });
+    });
+  },
+
+  _doSave(filePath) {
+    wx.saveImageToPhotosAlbum({
+      filePath: filePath,
+      success: function() {
+        wx.showToast({ title: '已保存到相册 ✓', icon: 'success', duration: 2000 });
+      },
+      fail: function(err) {
+        if (err.errMsg && err.errMsg.indexOf('auth deny') !== -1) {
+          wx.showModal({
+            title: '需要相册权限',
+            content: '请在右上角「...」→ 设置 中允许访问相册',
+            confirmText: '去设置',
+            success: function(res) { if (res.confirm) wx.openSetting(); },
           });
-        } else if (res.tapIndex === 1) {
-          wx.showShareMenu({ withShareTicket: true, menus: ['shareTimeline'] });
-          wx.showToast({ title: '长按右上角分享到朋友圈', icon: 'none', duration: 2000 });
-        } else if (res.tapIndex === 2) {
-          wx.showToast({ title: '截图后长按图片可保存到相册', icon: 'none', duration: 2500 });
+        } else {
+          wx.showToast({ title: '保存失败，请截图', icon: 'none', duration: 2000 });
         }
       },
     });
