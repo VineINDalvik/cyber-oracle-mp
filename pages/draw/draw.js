@@ -66,11 +66,12 @@ Page({
     var result = tarot.drawSpread(spread);
     result.cards.forEach(function(c) { collection.recordCardSeen(c.card.id); });
     var seed = Date.now();
+    var tableCount = Math.max(9, spread.cardCount + 8);
     this.setData({
       selectedSpread: spread, spreadResult: result,
       view: 'spread', phase: 'shuffling',
       pickIndex: 0, shuffleCount: 0,
-      tableCards: makeTableCards(seed, 7),
+      tableCards: makeTableCards(seed, tableCount),
     });
     var self = this;
     setTimeout(function() { self.setData({ phase: 'table' }); }, 1200);
@@ -105,6 +106,7 @@ Page({
     var fortune = tarot.castTopicFortune(topic.id, spread);
     fortune.spread.cards.forEach(function(c) { collection.recordCardSeen(c.card.id); });
     var seed = Date.now();
+    var tableCount = Math.max(9, spread.cardCount + 8);
     this.setData({
       selectedSpread: spread,
       view: 'topic', phase: 'shuffling',
@@ -114,7 +116,7 @@ Page({
       topicGanZhi: fortune.ganZhi,
       topicFortune: fortune,
       pickIndex: 0, shuffleCount: 0,
-      tableCards: makeTableCards(seed, 7),
+      tableCards: makeTableCards(seed, tableCount),
     });
     var self = this;
     setTimeout(function() { self.setData({ phase: 'table' }); }, 1500);
@@ -123,9 +125,10 @@ Page({
   reshuffleTable() {
     if (this.data.pickIndex > 0) return;
     var count = this.data.shuffleCount + 1;
+    var tableCount = Math.max(9, (this.data.selectedSpread || { cardCount: 1 }).cardCount + 8);
     this.setData({
       shuffleCount: count,
-      tableCards: makeTableCards(Date.now() + count * 131, 7),
+      tableCards: makeTableCards(Date.now() + count * 131, tableCount),
     });
   },
 
@@ -166,9 +169,10 @@ Page({
       }
       if (remaining < 2) {
         var nc = self.data.shuffleCount + 1;
+        var tc = Math.max(9, (self.data.selectedSpread || { cardCount: 1 }).cardCount + 8);
         self.setData({
           shuffleCount: nc,
-          tableCards: makeTableCards(Date.now() + nc * 131, 7),
+          tableCards: makeTableCards(Date.now() + nc * 131, tc),
         });
       }
     }

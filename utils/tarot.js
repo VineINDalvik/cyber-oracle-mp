@@ -133,13 +133,13 @@ const MAJOR_ARCANA = [
 ];
 
 const SPREAD_TYPES = [
-  { id:'single',name:'单牌指引',description:'一张牌，直击核心',cardCount:1,
+  { id:'single',name:'单牌指引',description:'一张牌，直击核心',tip:'脑子里只有一件事，想要一个直接答案',cardCount:1,
     positions:[{name:'今日核心',description:'此刻最需要听到的那句话'}]},
-  { id:'timeline',name:'时间之河',description:'过去 → 现在 → 未来，捋清来龙去脉',cardCount:3,
+  { id:'timeline',name:'时间之河',description:'来时路 · 现在卡哪 · 往哪走',tip:'想理清一件事的来龙去脉，或者感觉走了很久还没进展',cardCount:3,
     positions:[{name:'来时路',description:'哪些过去的事影响了现在'},{name:'现在卡在哪',description:'你当前真实的处境和状态'},{name:'往哪走',description:'顺着这条路最可能的去向'}]},
-  { id:'situation',name:'困境解码',description:'看清处境 · 找到卡点 · 拿到建议',cardCount:3,
+  { id:'situation',name:'困境解码',description:'看清处境 · 找到卡点 · 拿到建议',tip:'有件事想不通、被卡住，想知道卡在哪、怎么突破',cardCount:3,
     positions:[{name:'现在这是啥情况',description:'你所处的真实境况'},{name:'卡在哪里',description:'阻碍你的关键因素'},{name:'可以怎么做',description:'现在能采取的行动方向'}]},
-  { id:'star',name:'五星命盘',description:'最全面的一次解读，5张牌看透一件事',cardCount:5,
+  { id:'star',name:'五星命盘',description:'1个人·5张牌·最全面的一次解读',tip:'面对大事、想深度看清楚一件事，愿意花时间的那种',cardCount:5,
     positions:[{name:'你现在的状态',description:'此刻你内心真实的样子'},{name:'是什么影响了你',description:'背后最关键的影响因素'},{name:'真正的挑战是',description:'你现在面对的核心困境'},{name:'你可以做什么',description:'现在就能采取的一个行动'},{name:'最可能的结果',description:'顺着这条路走下去的方向'}]},
 ];
 

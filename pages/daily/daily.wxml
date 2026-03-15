@@ -93,7 +93,7 @@
     <view class="btn-primary" bindtap="requestReading">
       {{picked ? (reading ? (showReading ? '📖 收起' : '📖 查看') : '📖 完整解读') : '先选牌'}}
     </view>
-    <button class="share-btn" open-type="share">💾 保存分享图</button>
+    <view class="share-btn glass" bindtap="showShareOptions" wx:if="{{picked}}">📤 分享/保存</view>
   </view>
 
   <!-- Reading -->

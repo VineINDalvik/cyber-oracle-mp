@@ -382,12 +382,16 @@ Page({
     self.setData({ showReading: true, isLoading: true });
     collection.recordReading();
 
+    var calendar = self.data.calendar;
     api.streamReading({
       mode: 'daily',
       card: '赛博·' + result.card.name + '（' + result.card.cyberName + '）',
       cardMeaning: result.isReversed ? result.card.reversed : result.card.upright,
+      cardUprightMeaning: result.card.upright,
+      cardReversedMeaning: result.card.reversed,
       isReversed: result.isReversed,
       fortune: result.fortune,
+      label: result.label,
       date: dateStr,
       ganZhi: gz.gan + gz.zhi + '日',
       wuxing: gz.wuxing,
@@ -401,10 +405,37 @@ Page({
       stress: daily.stress,
       mood: daily.mood,
       weather: daily.weather,
+      calendarYi: calendar ? calendar.yi.join('、') : '',
+      calendarJi: calendar ? calendar.ji.join('、') : '',
+      calendarAdvice: calendar ? calendar.advice : '',
     }).then(function(text) {
       self.setData({ reading: text, isLoading: false });
     }).catch(function(e) {
       self.setData({ reading: '⚠️ ' + (e.message || '信号中断'), isLoading: false });
+    });
+  },
+
+  showShareOptions() {
+    var self = this;
+    var result = self.data.result;
+    var cardName = result ? ('赛博·' + result.card.name) : '今日签';
+    wx.showActionSheet({
+      itemList: ['分享给朋友', '分享到朋友圈', '截图保存（长按图片）'],
+      success: function(res) {
+        if (res.tapIndex === 0) {
+          wx.showShareMenu({ withShareTicket: true, menus: ['shareAppMessage'] });
+          // 触发系统分享
+          wx.shareAppMessage({
+            title: '今天的赛博签是「' + cardName + '」，你来测一下吧',
+            path: '/pages/daily/daily',
+          });
+        } else if (res.tapIndex === 1) {
+          wx.showShareMenu({ withShareTicket: true, menus: ['shareTimeline'] });
+          wx.showToast({ title: '长按右上角分享到朋友圈', icon: 'none', duration: 2000 });
+        } else if (res.tapIndex === 2) {
+          wx.showToast({ title: '截图后长按图片可保存到相册', icon: 'none', duration: 2500 });
+        }
+      },
     });
   },
 

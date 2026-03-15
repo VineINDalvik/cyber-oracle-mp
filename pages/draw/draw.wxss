@@ -3,12 +3,22 @@
   min-height: 100vh; padding: 32rpx 32rpx 160rpx;
 }
 .page-title { display: block; font-size: 36rpx; font-weight: bold; margin: 8rpx 0 28rpx; letter-spacing: 8rpx; }
+.spread-intro {
+  width: 100%; padding: 20rpx 24rpx; border-radius: 16rpx;
+  margin-bottom: 24rpx; border: 1rpx solid rgba(0,240,255,0.1);
+}
+.spread-intro-title { display: block; font-size: 22rpx; color: rgba(0,240,255,0.7); margin-bottom: 8rpx; font-weight: bold; }
+.spread-intro-body { display: block; font-size: 20rpx; color: rgba(224,224,255,0.4); line-height: 1.7; }
+
 .spread-list { width: 100%; margin-bottom: 40rpx; }
 .spread-item { width: 100%; padding: 24rpx; border-radius: 20rpx; margin-bottom: 16rpx; }
 .spread-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8rpx; }
 .spread-name { font-size: 28rpx; font-weight: bold; color: var(--neon-cyan); }
-.spread-count { font-size: 20rpx; color: rgba(224,224,255,0.2); }
-.spread-desc { font-size: 22rpx; color: rgba(224,224,255,0.3); }
+.spread-count { font-size: 20rpx; color: rgba(0,240,255,0.4); }
+.spread-desc { font-size: 22rpx; color: rgba(224,224,255,0.5); margin-bottom: 8rpx; }
+.spread-tip-row { display: flex; align-items: flex-start; gap: 6rpx; margin-top: 4rpx; }
+.spread-tip-label { font-size: 18rpx; color: rgba(255,184,0,0.5); flex-shrink: 0; margin-top: 2rpx; }
+.spread-tip { font-size: 18rpx; color: rgba(224,224,255,0.3); line-height: 1.5; }
 .topic-section { width: 100%; }
 .topic-header { display: flex; align-items: center; gap: 12rpx; margin-bottom: 20rpx; }
 .topic-tag {

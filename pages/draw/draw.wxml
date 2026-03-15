@@ -4,13 +4,23 @@
     <text class="section-label">TAROT SPREAD</text>
     <text class="page-title neon-text">选择牌阵</text>
 
+    <!-- 牌阵说明 -->
+    <view class="spread-intro glass">
+      <text class="spread-intro-title">塔罗占卜是什么？</text>
+      <text class="spread-intro-body">你从牌桌抽几张牌，每张牌对应一个「位置」（比如「现在的状态」「卡在哪里」「往哪走」）。AI会解读牌面+位置的组合，帮你看清当下的处境。牌阵不同 = 问题视角不同，不是哪个更准，是哪个更适合你现在想问的事。</text>
+    </view>
+
     <view class="spread-list">
       <view class="spread-item glass" wx:for="{{spreads}}" wx:key="id" data-idx="{{index}}" bindtap="selectSpread">
         <view class="spread-header">
           <text class="spread-name">{{item.name}}</text>
-          <text class="spread-count mono">{{item.cardCount}}张</text>
+          <text class="spread-count mono">{{item.cardCount}}张牌</text>
         </view>
         <text class="spread-desc">{{item.description}}</text>
+        <view class="spread-tip-row">
+          <text class="spread-tip-label mono">适合：</text>
+          <text class="spread-tip mono">{{item.tip}}</text>
+        </view>
       </view>
     </view>
 
