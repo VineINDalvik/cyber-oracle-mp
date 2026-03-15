@@ -219,15 +219,15 @@
   z-index: 1000;
 }
 .sc-panel {
-  /* 固定高度，小程序 scroll-view 必须能推算出明确高度才能滚动 */
   position: fixed; bottom: 0; left: 0; right: 0;
-  height: 90vh;
+  max-height: 90vh;
   background: #0d0d1e;
   border-radius: 40rpx 40rpx 0 0;
   padding: 20rpx 0 0;
   display: flex; flex-direction: column; align-items: center;
   border-top: 1rpx solid rgba(0,240,255,0.12);
   box-sizing: border-box;
+  padding-bottom: env(safe-area-inset-bottom, 0);
 }
 .sc-close {
   position: absolute; top: 28rpx; left: 32rpx;
@@ -241,10 +241,11 @@
   display: block; text-align: center;
   font-size: 18rpx; color: rgba(224,224,255,0.2); letter-spacing: 3rpx;
   margin-bottom: 20rpx;
+  flex-shrink: 0;
 }
 
-/* 卡片预览滚动区：90vh - 顶部label(60rpx) - 按钮区(130rpx) - 提示文字(60rpx) - padding(20rpx) */
-.sc-scroll { width: 100%; height: calc(90vh - 270rpx); }
+/* 卡片预览滚动区 */
+.sc-scroll { width: 100%; flex: 1; min-height: 0; }
 .sc-scroll-padding { height: 24rpx; }
 
 .sc-card-wrap {
@@ -304,7 +305,9 @@
 /* 操作按钮 */
 .sc-actions {
   display: flex; gap: 20rpx;
-  padding: 24rpx 32rpx 8rpx; width: 100%;
+  padding: 24rpx 32rpx 16rpx; width: 100%;
+  flex-shrink: 0;
+  background: #0d0d1e;
 }
 .sc-btn-save {
   flex: 1; padding: 28rpx 0; border-radius: 20rpx; text-align: center;
@@ -328,7 +331,9 @@
 .sc-hint {
   display: block; text-align: center;
   font-size: 18rpx; color: rgba(224,224,255,0.18);
-  padding: 4rpx 0 env(safe-area-inset-bottom, 24rpx);
+  padding: 0 0 16rpx;
+  flex-shrink: 0;
+  background: #0d0d1e;
 }
 
 /* Modal */
