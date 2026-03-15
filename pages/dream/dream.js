@@ -43,6 +43,10 @@ Page({
     // 时间轴
     showHistory: false,
     dreamHistory: [],
+    // 分享卡片
+    showShareCard: false,
+    shareCardLoading: false,
+    shareCardPath: '',
   },
 
   onLoad() {
@@ -169,7 +173,72 @@ Page({
   },
 
   reset() {
-    this.setData({ phase: 'input', dream: '', result: null, reading: '', isLoading: false });
+    this.setData({ phase: 'input', dream: '', result: null, reading: '', isLoading: false, showShareCard: false });
+  },
+
+  noop() {},
+
+  // --- Share Card ---
+  showShareCard() {
+    this.setData({ showShareCard: true, shareCardPath: '' });
+  },
+
+  closeShareCard() {
+    this.setData({ showShareCard: false, shareCardLoading: false });
+  },
+
+  _buildShareParams() {
+    var result = this.data.result;
+    var reading = this.data.reading;
+    return {
+      cardId: result.card.id,
+      cardName: result.card.name,
+      cyberName: result.card.cyberName || result.card.name,
+      isReversed: result.isReversed,
+      fortune: reading || result.card.upright,
+      label: '梦境解码',
+      mode: 'dream',
+      modeLabel: '梦境解码',
+      dateStr: new Date().toISOString().slice(0, 10),
+    };
+  },
+
+  saveShareCard() {
+    if (this.data.shareCardLoading) return;
+    var self = this;
+    if (self.data.shareCardPath) {
+      self._doSave(self.data.shareCardPath);
+      return;
+    }
+    self.setData({ shareCardLoading: true });
+    api.generateShareCard(self._buildShareParams()).then(function(tmpPath) {
+      self.setData({ shareCardLoading: false, shareCardPath: tmpPath });
+      self._doSave(tmpPath);
+    }).catch(function(e) {
+      self.setData({ shareCardLoading: false });
+      wx.showToast({ title: '生成失败，可截图保存', icon: 'none', duration: 2500 });
+    });
+  },
+
+  _doSave(filePath) {
+    wx.saveImageToPhotosAlbum({
+      filePath: filePath,
+      success: function() {
+        wx.showToast({ title: '已保存到相册 ✓', icon: 'success', duration: 2000 });
+      },
+      fail: function(err) {
+        if (err.errMsg && err.errMsg.indexOf('auth deny') !== -1) {
+          wx.showModal({
+            title: '需要相册权限',
+            content: '请在右上角「...」→ 设置 中允许访问相册',
+            confirmText: '去设置',
+            success: function(res) { if (res.confirm) wx.openSetting(); },
+          });
+        } else {
+          wx.showToast({ title: '保存失败，请截图', icon: 'none', duration: 2000 });
+        }
+      },
+    });
   },
 
   onShareAppMessage() {
