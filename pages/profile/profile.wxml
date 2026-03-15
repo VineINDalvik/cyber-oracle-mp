@@ -1,0 +1,110 @@
+<view class="page">
+  <!-- 顶部用户信息 -->
+  <view class="hero glass">
+    <view class="avatar-wrap">
+      <text class="avatar-glyph">☰</text>
+    </view>
+    <view class="user-info">
+      <text class="user-id mono">{{openid}}</text>
+      <view class="member-badge {{memberLevel === '免费版' ? 'free' : 'pro'}}">
+        <text>{{memberLevel}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 数据统计 -->
+  <view class="stats-row">
+    <view class="stat-item glass">
+      <text class="stat-num neon-text">{{totalReadings}}</text>
+      <text class="stat-label mono">总解读次数</text>
+    </view>
+    <view class="stat-item glass">
+      <text class="stat-num neon-text">{{seenCards}}/22</text>
+      <text class="stat-label mono">已见牌种</text>
+    </view>
+    <view class="stat-item glass">
+      <text class="stat-num neon-text">{{checkinStreak}}</text>
+      <text class="stat-label mono">连续签到天</text>
+    </view>
+  </view>
+
+  <!-- 会员订阅 -->
+  <view class="section-title mono">会员订阅</view>
+  <view class="menu-card glass" bindtap="showSubscribeTip">
+    <view class="menu-left">
+      <text class="menu-icon">💎</text>
+      <view class="menu-text-wrap">
+        <text class="menu-title">升级会员</text>
+        <text class="menu-sub mono">无限解读 · 专属报告 · 月度运势</text>
+      </view>
+    </view>
+    <text class="menu-arrow neon-text">›</text>
+  </view>
+
+  <!-- 个人设置 -->
+  <view class="section-title mono">个人设置</view>
+  <view class="menu-group glass">
+    <view class="menu-item" bindtap="goEditBirth">
+      <view class="menu-left">
+        <text class="menu-icon">✨</text>
+        <view class="menu-text-wrap">
+          <text class="menu-title">生辰档案</text>
+          <text class="menu-sub mono" wx:if="{{birthDate}}">{{birthDate}} {{birthTime}}</text>
+          <text class="menu-sub mono dim" wx:else>未填写，填写后解读更准确</text>
+        </view>
+      </view>
+      <text class="menu-arrow mono">›</text>
+    </view>
+
+    <view class="menu-divider"></view>
+
+    <view class="menu-item">
+      <view class="menu-left">
+        <text class="menu-icon">💳</text>
+        <view class="menu-text-wrap">
+          <text class="menu-title">剩余积分</text>
+          <text class="menu-sub mono">{{credits}} 点 · 每次深度解读消耗1点</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 关于 -->
+  <view class="section-title mono">关于</view>
+  <view class="menu-group glass">
+    <view class="menu-item">
+      <view class="menu-left">
+        <text class="menu-icon">🌐</text>
+        <text class="menu-title">网页版</text>
+      </view>
+      <text class="menu-val mono">cyber.vinex.top</text>
+    </view>
+
+    <view class="menu-divider"></view>
+
+    <view class="menu-item">
+      <view class="menu-left">
+        <text class="menu-icon">📋</text>
+        <text class="menu-title">版本</text>
+      </view>
+      <text class="menu-val mono">v1.0</text>
+    </view>
+  </view>
+
+  <!-- 退出 -->
+  <view class="logout-btn" bindtap="showLogoutConfirm">退出登录</view>
+
+  <!-- 退出确认弹窗 -->
+  <view class="confirm-mask" wx:if="{{showLogoutConfirm}}" bindtap="cancelLogout">
+    <view class="confirm-panel glass" catchtap="noop">
+      <text class="confirm-title">确定退出登录？</text>
+      <text class="confirm-sub mono">退出后本地数据会保留，重新登录可同步云端数据</text>
+      <view class="confirm-btns">
+        <view class="confirm-btn-cancel" bindtap="cancelLogout">取消</view>
+        <view class="confirm-btn-ok" bindtap="confirmLogout">退出</view>
+      </view>
+    </view>
+  </view>
+
+  <view style="height:60rpx"></view>
+</view>

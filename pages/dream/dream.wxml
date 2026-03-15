@@ -1,6 +1,53 @@
 <view class="page">
+  <!-- 顶部历史入口 -->
+  <view class="dream-top-bar" wx:if="{{phase === 'input' || showHistory}}">
+    <view class="dream-tab {{!showHistory ? 'active' : ''}}" bindtap="toggleHistory">
+      <text>解梦</text>
+    </view>
+    <view class="dream-tab {{showHistory ? 'active' : ''}}" bindtap="toggleHistory">
+      <text>梦境轨迹</text>
+      <text class="dream-tab-count" wx:if="{{dreamHistory.length > 0}}"> {{dreamHistory.length}}</text>
+    </view>
+  </view>
+
+  <!-- 梦境时间轴 -->
+  <block wx:if="{{showHistory}}">
+    <view class="timeline-empty" wx:if="{{dreamHistory.length === 0}}">
+      <text class="timeline-empty-icon">🌙</text>
+      <text class="timeline-empty-text mono">还没有梦境记录\n解析第一个梦境后会出现在这里</text>
+    </view>
+    <view class="timeline" wx:else>
+      <view class="timeline-item" wx:for="{{dreamHistory}}" wx:key="dateStr" data-item="{{item}}" bindtap="viewHistoryItem">
+        <!-- 时间轴左侧 -->
+        <view class="tl-left">
+          <view class="tl-date-wrap">
+            <text class="tl-date mono">{{item.dateStr}}</text>
+            <text class="tl-time mono">{{item.timeStr}}</text>
+          </view>
+          <view class="tl-line"></view>
+        </view>
+        <!-- 内容卡片 -->
+        <view class="tl-card glass">
+          <view class="tl-card-top">
+            <image class="tl-card-img {{item.isReversed ? 'reversed' : ''}}"
+                   src="{{item.imageUrl}}" mode="aspectFill" />
+            <view class="tl-card-info">
+              <text class="tl-card-name neon-text-purple">赛博·{{item.cardName}}</text>
+              <text class="tl-card-pos mono">{{item.isReversed ? '⟲ 逆位' : '⬆ 正位'}}</text>
+              <text class="tl-dream-excerpt">{{item.dreamExcerpt}}</text>
+            </view>
+          </view>
+          <view class="tl-reading-preview" wx:if="{{item.reading}}">
+            <text class="tl-reading-text">{{item.reading.slice(0,60)}}…</text>
+          </view>
+          <text class="tl-tap-hint mono">点击查看完整解读 ›</text>
+        </view>
+      </view>
+    </view>
+  </block>
+
   <!-- Input -->
-  <block wx:if="{{phase === 'input'}}">
+  <block wx:if="{{phase === 'input' && !showHistory}}">
     <text class="section-label">DREAM DECODER</text>
     <text class="page-title neon-text-purple">梦境解码</text>
     <text class="page-subtitle">周公解梦 × 赛博塔罗，双重视角解析</text>
@@ -78,3 +125,4 @@
 
   <view class="tip-row mono" bindtap="previewTip" wx:if="{{false}}">☕ 赞赏支持（点击查看二维码）</view>
 </view>
+

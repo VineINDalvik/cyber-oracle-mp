@@ -2,6 +2,25 @@ const tarot = require('../../utils/tarot');
 const api = require('../../utils/api');
 const collection = require('../../utils/collection');
 
+const DREAM_HISTORY_KEY = 'co_dream_history_v1';
+const MAX_HISTORY = 30;
+
+function getDreamHistory() {
+  try { return wx.getStorageSync(DREAM_HISTORY_KEY) || []; } catch { return []; }
+}
+
+function saveDreamEntry(entry) {
+  try {
+    var list = getDreamHistory();
+    // 去重（同一天的覆盖）
+    list = list.filter(function(d) { return d.dateStr !== entry.dateStr; });
+    list.unshift(entry);
+    if (list.length > MAX_HISTORY) list = list.slice(0, MAX_HISTORY);
+    wx.setStorageSync(DREAM_HISTORY_KEY, list);
+    return list;
+  } catch { return []; }
+}
+
 const DREAM_HINTS = [
   '我梦到自己在飞…',
   '梦见大水淹没了城市…',
@@ -21,11 +40,17 @@ Page({
     result: null,
     reading: '',
     isLoading: false,
+    // 时间轴
+    showHistory: false,
+    dreamHistory: [],
   },
 
   onLoad() {
     wx.showShareMenu({ withShareTicket: true, menus: ['shareAppMessage', 'shareTimeline'] });
-    this.setData({ hint: DREAM_HINTS[Math.floor(Math.random() * DREAM_HINTS.length)] });
+    this.setData({
+      hint: DREAM_HINTS[Math.floor(Math.random() * DREAM_HINTS.length)],
+      dreamHistory: getDreamHistory(),
+    });
     // 页面被内存回收后重建，尝试还原上次状态
     var saved = getApp().globalData.dreamPageState;
     if (saved && saved.phase && saved.phase !== 'input') {
@@ -99,8 +124,42 @@ Page({
       element: result.card.element,
     }).then(function(text) {
       self.setData({ reading: text, isLoading: false });
-    }).catch(function() {
+      // 保存到历史记录
+      var d = new Date();
+      var dateStr = d.toISOString().slice(0, 10);
+      var entry = {
+        dateStr: dateStr,
+        timeStr: d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0'),
+        dream: dream,
+        cardId: result.card.id,
+        isReversed: result.isReversed,
+        cardName: result.card.name,
+        imageUrl: api.getCardImageUrl(result.card.id),
+        reading: text,
+        dreamExcerpt: dream.length > 40 ? dream.slice(0, 40) + '…' : dream,
+      };
+      var newHistory = saveDreamEntry(entry);
+      self.setData({ dreamHistory: newHistory });
+    }).catch(function(e) {
       self.setData({ reading: '⚠️ ' + (e.message || '信号中断'), isLoading: false });
+    });
+  },
+
+  toggleHistory() {
+    this.setData({ showHistory: !this.data.showHistory });
+  },
+
+  viewHistoryItem(e) {
+    var item = e.currentTarget.dataset.item;
+    this.setData({
+      phase: 'result',
+      dream: item.dream,
+      result: {
+        card: { id: item.cardId, name: item.cardName },
+        isReversed: item.isReversed,
+      },
+      reading: item.reading,
+      showHistory: false,
     });
   },
 

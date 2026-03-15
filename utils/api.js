@@ -1,7 +1,38 @@
 const app = getApp();
 
+const TOKEN_KEY = 'co_jwt_token';
+
 function getApiBase() {
   return app.globalData.apiBase;
+}
+
+function getAuthHeaders() {
+  var token = wx.getStorageSync(TOKEN_KEY);
+  var headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  return headers;
+}
+
+/**
+ * 微信登录：code 换 JWT token
+ */
+function wxLogin(code, deviceId) {
+  return new Promise(function(resolve, reject) {
+    wx.request({
+      url: getApiBase() + '/api/auth/wechat-login',
+      method: 'POST',
+      data: { code: code, deviceId: deviceId },
+      header: { 'Content-Type': 'application/json' },
+      success: function(res) {
+        if (res.statusCode === 200 && res.data && res.data.token) {
+          resolve(res.data);
+        } else {
+          reject(new Error((res.data && res.data.error) || 'HTTP ' + res.statusCode));
+        }
+      },
+      fail: function(e) { reject(new Error(e.errMsg || 'request fail')); },
+    });
+  });
 }
 
 function streamReading(params) {
@@ -15,7 +46,7 @@ function streamReading(params) {
       dataType: '其他',
       responseType: 'text',
       timeout: 60000,
-      header: { 'Content-Type': 'application/json' },
+      header: getAuthHeaders(),
       success: function(res) {
         console.log('[divine] status', res.statusCode, typeof res.data);
         if (res.statusCode === 200 && res.data) {
@@ -46,7 +77,7 @@ function requestJson(path, method, data) {
       url: `${getApiBase()}${path}`,
       method: method || 'GET',
       data,
-      header: { 'Content-Type': 'application/json' },
+      header: getAuthHeaders(),
       success(res) {
         if (res.statusCode >= 200 && res.statusCode < 300) resolve(res.data);
         else reject(new Error((res.data && res.data.error) ? res.data.error : `HTTP ${res.statusCode}`));
@@ -89,4 +120,4 @@ function generateShareCard(params) {
   });
 }
 
-module.exports = { streamReading, getCardImageUrl, requestJson, generateShareCard };
+module.exports = { streamReading, getCardImageUrl, requestJson, generateShareCard, wxLogin, getAuthHeaders };

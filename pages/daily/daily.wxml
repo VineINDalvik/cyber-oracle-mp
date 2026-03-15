@@ -1,6 +1,10 @@
 <view class="page">
   <!-- Header -->
   <view class="header">
+    <!-- 右上角我的设置入口 -->
+    <view class="profile-entry" bindtap="goProfile">
+      <text class="profile-entry-icon">⚙</text>
+    </view>
     <text class="section-label">TODAY'S CYBER SIGN</text>
     <text class="date mono">{{dateStr}} · 周{{weekday}}</text>
     <view class="ganzhi-badge glass">
@@ -162,13 +166,31 @@
     </view>
   </view>
 
-  <!-- Collection -->
-  <view class="collection-bar glass" bindtap="showCollectionTip">
-    <view class="coll-left">
-      <text class="coll-label mono">已抽到 {{collectionCount}}/22 种牌</text>
-      <text class="coll-sub mono">每种牌只计一次，22 张集齐为止</text>
+  <!-- 7天牌历 -->
+  <view class="week-cal glass" wx:if="{{weekCards.length > 0}}">
+    <view class="week-cal-header">
+      <text class="week-cal-title mono">近7天牌历</text>
+      <text class="week-cal-sub mono" bindtap="showCollectionTip">已见 {{collectionCount}}/22 种 ›</text>
     </view>
-    <text class="coll-arrow mono">›</text>
+    <scroll-view class="week-cal-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="week-cal-row">
+        <view class="week-day-item {{item.isToday ? 'today' : ''}} {{item.hasPicked ? 'picked' : 'empty'}}"
+              wx:for="{{weekCards}}" wx:key="dateStr">
+          <text class="wday-label mono">{{item.label}}</text>
+          <text class="wday-num mono">{{item.dayNum}}</text>
+          <view class="wday-card-wrap">
+            <image wx:if="{{item.hasPicked}}"
+                   class="wday-card-img {{item.isReversed ? 'reversed' : ''}}"
+                   src="{{item.imageUrl}}" mode="aspectFill" />
+            <view wx:else class="wday-card-empty">
+              <text class="wday-empty-icon">？</text>
+            </view>
+          </view>
+          <text class="wday-name mono" wx:if="{{item.hasPicked}}">{{item.cardName}}</text>
+          <text class="wday-name-dim mono" wx:else>—</text>
+        </view>
+      </view>
+    </scroll-view>
   </view>
 
   <view class="tip-row mono" bindtap="previewTip" wx:if="{{false}}">☕ 赞赏支持（点击查看二维码）</view>

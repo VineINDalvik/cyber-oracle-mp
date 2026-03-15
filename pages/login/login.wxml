@@ -1,0 +1,35 @@
+<view class="page">
+  <view class="brand-area">
+    <text class="brand-glyph">☰</text>
+    <text class="brand-name neon-text">赛博神算子</text>
+    <text class="brand-sub mono">CYBER ORACLE · AI 塔罗灵媒</text>
+  </view>
+
+  <view class="card-preview">
+    <view class="preview-card glass">
+      <text class="preview-icon">🎴</text>
+      <text class="preview-text">每日一签 · 牌阵占卜 · 梦境解码 · 双人合盘</text>
+    </view>
+  </view>
+
+  <view class="login-area">
+    <view wx:if="{{loading}}" class="loading-wrap">
+      <text class="loading-dot mono">▍</text>
+      <text class="loading-label mono">正在连接赛博矩阵...</text>
+    </view>
+
+    <view wx:elif="{{error}}" class="error-wrap">
+      <text class="error-text">{{error}}</text>
+      <view class="btn-retry" bindtap="retry">重新连接</view>
+    </view>
+
+    <view wx:else class="idle-wrap">
+      <text class="idle-hint mono">正在初始化...</text>
+    </view>
+  </view>
+
+  <view class="footer">
+    <text class="footer-text mono">登录即表示同意服务条款和隐私政策</text>
+    <text class="footer-site mono">cyber.vinex.top</text>
+  </view>
+</view>

@@ -129,6 +129,7 @@ Page({
     isLoading: false,
     collectionCount: 0,
     picked: false,
+    weekCards: [], // 最近7天的牌历
 
     showBirth: false,
     showDaily: false,
@@ -191,6 +192,7 @@ Page({
       moodText: mLabel,
       picked: picked,
       calendar: calendar,
+      weekCards: self._buildWeekCards(),
     });
 
     collection.syncToServer().then(function() {
@@ -240,11 +242,48 @@ Page({
 
   pickCard(e) {
     var idx = Number(e.currentTarget.dataset.idx || 0);
+    var result = this.data.result;
     try {
       wx.setStorageSync('co_daily_picked_' + this.data.dateStr, 1);
       wx.setStorageSync('co_daily_pick_' + this.data.dateStr, idx);
+      // 记录当天牌面，用于周历展示
+      if (result && result.card) {
+        wx.setStorageSync('co_daily_card_' + this.data.dateStr, {
+          cardId: result.card.id,
+          isReversed: result.isReversed,
+          cardName: result.card.name,
+        });
+      }
     } catch {}
-    this.setData({ picked: true });
+    this.setData({ picked: true, weekCards: this._buildWeekCards() });
+  },
+
+  _buildWeekCards() {
+    var apiUtils = require('../../utils/api');
+    var days = [];
+    var weekNames = ['日','一','二','三','四','五','六'];
+    for (var i = 6; i >= 0; i--) {
+      var d = new Date();
+      d.setDate(d.getDate() - i);
+      var ds = d.toISOString().slice(0, 10);
+      var month = d.getMonth() + 1;
+      var day = d.getDate();
+      var wn = weekNames[d.getDay()];
+      var cardData = null;
+      try { cardData = wx.getStorageSync('co_daily_card_' + ds) || null; } catch {}
+      days.push({
+        dateStr: ds,
+        label: (i === 0 ? '今天' : ('周' + wn)),
+        dayNum: month + '/' + day,
+        isToday: i === 0,
+        cardId: cardData ? cardData.cardId : -1,
+        isReversed: cardData ? cardData.isReversed : false,
+        cardName: cardData ? cardData.cardName : '',
+        imageUrl: cardData ? apiUtils.getCardImageUrl(cardData.cardId) : '',
+        hasPicked: !!cardData,
+      });
+    }
+    return days;
   },
 
   noop() {},
@@ -499,6 +538,10 @@ Page({
         }
       },
     });
+  },
+
+  goProfile() {
+    wx.navigateTo({ url: '/pages/profile/profile' });
   },
 
   showCollectionTip() {

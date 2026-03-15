@@ -1,0 +1,76 @@
+.page {
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 60rpx 40rpx 80rpx;
+  background: linear-gradient(180deg, #0a0a0f 0%, #0d0d22 100%);
+}
+
+.brand-area {
+  display: flex; flex-direction: column; align-items: center;
+  margin-bottom: 60rpx;
+}
+.brand-glyph {
+  font-size: 80rpx; color: rgba(0,240,255,0.3);
+  margin-bottom: 24rpx;
+}
+.brand-name {
+  font-size: 52rpx; font-weight: bold;
+  letter-spacing: 4rpx; margin-bottom: 12rpx;
+}
+.brand-sub {
+  font-size: 20rpx; color: rgba(224,224,255,0.3);
+  letter-spacing: 4rpx;
+}
+
+.card-preview {
+  width: 100%; max-width: 560rpx;
+  margin-bottom: 70rpx;
+}
+.preview-card {
+  width: 100%; padding: 32rpx;
+  border-radius: 24rpx; text-align: center;
+  border: 1rpx solid rgba(0,240,255,0.1);
+  background: rgba(13,13,34,0.8);
+}
+.preview-icon { font-size: 60rpx; display: block; margin-bottom: 16rpx; }
+.preview-text {
+  font-size: 24rpx; color: rgba(224,224,255,0.4);
+  line-height: 1.8;
+}
+
+.login-area {
+  width: 100%; max-width: 560rpx;
+  display: flex; flex-direction: column; align-items: center;
+  min-height: 120rpx; justify-content: center;
+}
+
+.loading-wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 16rpx;
+}
+.loading-dot {
+  font-size: 40rpx; color: rgba(0,240,255,0.7);
+  animation: blink 0.8s steps(2) infinite;
+}
+@keyframes blink { 0% { opacity: 1; } 100% { opacity: 0; } }
+.loading-label { font-size: 22rpx; color: rgba(224,224,255,0.3); }
+
+.error-wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 24rpx;
+}
+.error-text { font-size: 24rpx; color: rgba(255,100,100,0.7); text-align: center; }
+.btn-retry {
+  padding: 22rpx 60rpx; border-radius: 16rpx;
+  background: rgba(0,240,255,0.1); border: 1rpx solid rgba(0,240,255,0.2);
+  color: rgba(0,240,255,0.7); font-size: 26rpx;
+}
+
+.idle-wrap { }
+.idle-hint { font-size: 20rpx; color: rgba(224,224,255,0.2); }
+
+.footer {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  padding: 16rpx 40rpx env(safe-area-inset-bottom, 24rpx);
+  display: flex; flex-direction: column; align-items: center; gap: 8rpx;
+}
+.footer-text { font-size: 16rpx; color: rgba(224,224,255,0.15); }
+.footer-site { font-size: 16rpx; color: rgba(0,240,255,0.15); }

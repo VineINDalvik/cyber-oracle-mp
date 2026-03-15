@@ -1,4 +1,6 @@
 const app = getApp();
+const apiUtils = require('./api');
+const TOKEN_KEY = 'co_jwt_token';
 
 // ─── Device ID ──────────────────────────────────────────────────
 const DEVICE_ID_KEY = 'cyber-oracle-device-id';
@@ -69,13 +71,13 @@ function saveCredits(data) {
 
 function apiCall(action, extra) {
   return new Promise(function(resolve) {
+    var headers = apiUtils.getAuthHeaders();
+    // 兼容未登录时用 device ID
+    if (!wx.getStorageSync(TOKEN_KEY)) headers['x-user-id'] = getDeviceId();
     wx.request({
       url: app.globalData.apiBase + '/api/user',
       method: 'POST',
-      header: {
-        'Content-Type': 'application/json',
-        'x-user-id': getDeviceId(),
-      },
+      header: headers,
       data: Object.assign({ action: action }, extra || {}),
       success: function(res) {
         if (res.statusCode === 200) resolve(res.data);
@@ -88,10 +90,12 @@ function apiCall(action, extra) {
 
 function apiFetch() {
   return new Promise(function(resolve) {
+    var headers = apiUtils.getAuthHeaders();
+    if (!wx.getStorageSync(TOKEN_KEY)) headers['x-user-id'] = getDeviceId();
     wx.request({
       url: app.globalData.apiBase + '/api/user',
       method: 'GET',
-      header: { 'x-user-id': getDeviceId() },
+      header: headers,
       success: function(res) {
         if (res.statusCode === 200) resolve(res.data);
         else resolve(null);

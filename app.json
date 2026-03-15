@@ -4,7 +4,9 @@
     "pages/draw/draw",
     "pages/compat/compat",
     "pages/dream/dream",
-    "pages/index/index"
+    "pages/index/index",
+    "pages/login/login",
+    "pages/profile/profile"
   ],
   "window": {
     "navigationBarBackgroundColor": "#0a0a0f",
