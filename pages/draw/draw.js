@@ -24,6 +24,7 @@ Page({
   data: {
     view: 'menu',
     phase: 'select',
+    showIntro: false,
     spreads: tarot.SPREAD_TYPES,
     topics: [
       { id:'love', icon:'💘', name:'感情运', desc:'感情全维解读' },
@@ -57,6 +58,10 @@ Page({
     if (saved && saved.view && saved.view !== 'menu') {
       this.setData(saved);
     }
+  },
+
+  toggleIntro() {
+    this.setData({ showIntro: !this.data.showIntro });
   },
 
   onShow() {

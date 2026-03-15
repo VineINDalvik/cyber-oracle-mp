@@ -5,11 +5,21 @@
       <text class="avatar-glyph">☰</text>
     </view>
     <view class="user-info">
+      <view class="login-status-row">
+        <text class="login-dot {{isLoggedIn ? 'dot-green' : 'dot-yellow'}}">●</text>
+        <text class="login-label mono">{{isLoggedIn ? '微信已自动连接' : '连接中…'}}</text>
+      </view>
       <text class="user-id mono">{{openid}}</text>
       <view class="member-badge {{memberLevel === '免费版' ? 'free' : 'pro'}}">
         <text>{{memberLevel}}</text>
       </view>
     </view>
+  </view>
+
+  <!-- 微信登录说明 -->
+  <view class="login-tip glass">
+    <text class="login-tip-icon">ℹ️</text>
+    <text class="login-tip-text">微信小程序会自动完成身份连接，无需额外登录操作。你的数据与微信账号绑定，换机后可自动同步。</text>
   </view>
 
   <!-- 数据统计 -->
@@ -44,12 +54,12 @@
   <!-- 个人设置 -->
   <view class="section-title mono">个人设置</view>
   <view class="menu-group glass">
-    <view class="menu-item" bindtap="goEditBirth">
+    <view class="menu-item" bindtap="openBirthEdit">
       <view class="menu-left">
         <text class="menu-icon">✨</text>
         <view class="menu-text-wrap">
           <text class="menu-title">生辰档案</text>
-          <text class="menu-sub mono" wx:if="{{birthDate}}">{{birthDate}} {{birthTime}}</text>
+          <text class="menu-sub mono" wx:if="{{birthHasFilled}}">{{birthDate}} {{birthTime}} · 已填写</text>
           <text class="menu-sub mono dim" wx:else>未填写，填写后解读更准确</text>
         </view>
       </view>
@@ -94,6 +104,45 @@
   <!-- 退出 -->
   <view class="logout-btn" bindtap="showLogoutConfirm">退出登录</view>
 
+  <view style="height:60rpx"></view>
+
+  <!-- ── 生辰档案弹窗 ─── -->
+  <view class="birth-mask" wx:if="{{showBirth}}" bindtap="closeBirth">
+    <view class="birth-panel glass" catchtap="noop">
+      <text class="birth-title">生辰档案</text>
+      <text class="birth-hint mono">填写后 AI 解读会加入命盘参考，更贴合你的能量场</text>
+
+      <view class="birth-field">
+        <text class="birth-label mono">出生日期</text>
+        <input class="birth-input glass"
+          placeholder="如 1995-08-15"
+          placeholder-class="birth-ph"
+          value="{{editBirth.birthDate}}"
+          bindinput="onBirthDateInput"
+          type="text"
+        />
+      </view>
+
+      <view class="birth-field">
+        <text class="birth-label mono">出生时辰（可选）</text>
+        <picker mode="selector" range="{{shichenOptions}}" range-key="label"
+          value="{{shichenIdx}}" bindchange="onShichenChange">
+          <view class="birth-picker glass">
+            <text class="{{editBirth.birthTime ? 'birth-picker-val' : 'birth-ph'}}">
+              {{editBirth.birthTime ? shichenOptions[shichenIdx].label : '选择时辰'}}
+            </text>
+            <text class="birth-picker-arrow mono">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="birth-actions">
+        <view class="birth-btn-save btn-primary" bindtap="saveBirthProfile">保存</view>
+        <view class="birth-btn-clear" bindtap="clearBirthProfile">清空档案</view>
+      </view>
+    </view>
+  </view>
+
   <!-- 退出确认弹窗 -->
   <view class="confirm-mask" wx:if="{{showLogoutConfirm}}" bindtap="cancelLogout">
     <view class="confirm-panel glass" catchtap="noop">
@@ -105,6 +154,4 @@
       </view>
     </view>
   </view>
-
-  <view style="height:60rpx"></view>
 </view>
