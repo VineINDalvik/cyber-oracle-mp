@@ -163,9 +163,12 @@
   </view>
 
   <!-- Collection -->
-  <view class="collection-bar glass">
-    <text class="coll-label mono">塔罗图鉴 {{collectionCount}}/22</text>
-    <text class="coll-credits mono">{{collectionCount}}/22</text>
+  <view class="collection-bar glass" bindtap="showCollectionTip">
+    <view class="coll-left">
+      <text class="coll-label mono">已抽到 {{collectionCount}}/22 种牌</text>
+      <text class="coll-sub mono">每种牌只计一次，22 张集齐为止</text>
+    </view>
+    <text class="coll-arrow mono">›</text>
   </view>
 
   <view class="tip-row mono" bindtap="previewTip" wx:if="{{false}}">☕ 赞赏支持（点击查看二维码）</view>

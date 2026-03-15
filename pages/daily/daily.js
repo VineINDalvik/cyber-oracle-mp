@@ -501,6 +501,20 @@ Page({
     });
   },
 
+  showCollectionTip() {
+    var count = this.data.collectionCount;
+    var left = 22 - count;
+    var msg = count === 22
+      ? '恭喜！你已集齐全部 22 张大阿卡纳！\n\n塔罗共有 22 张主牌（大阿卡纳），每天抽签系统会记录你抽到过哪些牌。每种牌只算一次，不重复计数。\n\n你是见过世界的人。'
+      : '你已抽到 ' + count + '/22 种牌，还差 ' + left + ' 种没见过。\n\n塔罗共有 22 张主牌（大阿卡纳），每天抽签系统会记录你见过哪些牌。每种只算一次，全部解锁才算集齐。\n\n坚持每天来，慢慢遇见它们。';
+    wx.showModal({
+      title: '已抽到 ' + count + '/22 种牌',
+      content: msg,
+      showCancel: false,
+      confirmText: '知道了',
+    });
+  },
+
   previewTip() {
     var url = '/images/tip-qrcode.jpg';
     wx.previewImage({ current: url, urls: [url] });
