@@ -35,6 +35,31 @@ function wxLogin(code, deviceId) {
   });
 }
 
+/**
+ * 确认扫码登录（PC端二维码）
+ * @param {string} scene - 二维码场景值
+ * @param {string} openid - 用户openid
+ */
+function confirmQrcodeLogin(scene, openid) {
+  return new Promise(function(resolve, reject) {
+    var token = wx.getStorageSync(TOKEN_KEY);
+    wx.request({
+      url: getApiBase() + '/api/auth/wechat-qrcode/check',
+      method: 'POST',
+      data: { scene: scene, openid: openid, token: token },
+      header: { 'Content-Type': 'application/json' },
+      success: function(res) {
+        if (res.statusCode === 200 && res.data && res.data.success) {
+          resolve(res.data);
+        } else {
+          reject(new Error((res.data && res.data.error) || 'HTTP ' + res.statusCode));
+        }
+      },
+      fail: function(e) { reject(new Error(e.errMsg || 'request fail')); },
+    });
+  });
+}
+
 function streamReading(params) {
   return new Promise(function(resolve, reject) {
     var url = getApiBase() + '/api/divine';
@@ -120,4 +145,4 @@ function generateShareCard(params) {
   });
 }
 
-module.exports = { streamReading, getCardImageUrl, requestJson, generateShareCard, wxLogin, getAuthHeaders };
+module.exports = { streamReading, getCardImageUrl, requestJson, generateShareCard, wxLogin, confirmQrcodeLogin, getAuthHeaders };
